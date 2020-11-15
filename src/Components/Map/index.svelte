@@ -117,8 +117,6 @@ function render() {
     loading.setState(true);
     map = createMap()
     
-    getStayAtHomeInfo();
-
     getConcelhosLayer(concelhosStyle, layer => {
         layerConcelhos = layer;
         layer.addTo(map)
@@ -130,10 +128,11 @@ function render() {
         loading.setState(false);
 
         configureEventListeners();
-        
     })
 
     tileLayer.addTo(map);
+
+    getStayAtHomeInfo();
 }
 
 function resizeMap() {
