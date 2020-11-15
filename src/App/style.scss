@@ -1,0 +1,15 @@
+.container {
+  background-color: #eee;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 100%;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+
+  &__map {
+    width: 100%;
+    height: calc(100vh - 160px);
+    display: flex;
+  }
+}
