@@ -11,6 +11,7 @@
         <div>
             <img src="/images/iti.png" width="120" alt="ITI Larsys" />
             <img src="/images/INESC-ID-logo.png" width="100" alt="Inesc ID" />
+            <img src="/images/cerena.png" width="140" style="margin-left: 20px" alt="Cerena" />
         </div>
         <div>
             <a href="https://tecnico.ulisboa.pt/pt/">
