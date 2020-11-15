@@ -33,22 +33,55 @@ function getColor(d) {
     : colors[9];
 }
 
-function style(feature, isRiskMap) {
-    return {
-        fillColor: getColorFor(feature.properties, isRiskMap),
-        weight: 0,
-        dashArray: "0",
-        fillOpacity: 0.8,
-    };
+function getCColor(d) {
+    return d < 0.4
+    ? colors[0]
+    : d < 0.5
+    ? colors[2]
+    : d < 0.6
+    ? colors[4]
+    : d < 0.7
+    ? colors[6]
+    : colors[8]
 }
 
-function getColorFor(properties, isRiskMap) {
-    return isRiskMap
-            ? getColor(properties.Risk)
-            : getColor(properties.IQD);
+export const riskIqdStyle = (feature, mode) => ({
+    fillColor: colorForRiskIqd(feature.properties, mode),
+    weight: 0,
+    dashArray: "0",
+    fillOpacity: 1,
+})
+
+export const colorForRiskIqd = (properties, mode) => {
+    return mode.isRiskMap
+        ? getColor(properties.Risk)
+        : getColor(properties.IQD);
 }
 
-module.exports = {
-    style,
-    getColorFor
+export const concelhosStyle = (mode, value) => ({ 
+    color: "#fff",
+    fillColor: colorForConcelhos(mode, value),
+    fillOpacity: 0.7,
+    weight: 0.5,
+    opacity: 1
+})
+
+export const colorForConcelhos = (mode, value) => {
+    console.log(value)
+    if (mode.isSAHMap) {
+        return getCColor(value)
+    } else {
+        return "rgba(0,0,0,0)"
+    }
+}
+
+export default {
+    riskIqd: {
+        getStyle: riskIqdStyle,
+        getColor: colorForRiskIqd
+    },
+    concelhos: {
+        getStyle: concelhosStyle,
+        getColor: colorForConcelhos
+    }
 }

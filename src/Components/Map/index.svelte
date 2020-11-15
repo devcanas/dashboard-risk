@@ -3,9 +3,9 @@ import Overlays from "./Overlays";
 import LoadingSpinner from "@Components/LoadingSpinner";
 import { mapMode, mapInfo, sahInfo, loading } from "../../stores";
 import leafletPip from "@mapbox/leaflet-pip";
-import { style, getColorFor } from "./aux/layers/style";
+import style from "./aux/layers/style";
 import createMap from "./aux/createMap";
-import { getConcelhosLayer, getRiskIQDLayer } from "./aux/layers";
+import { getConcelhosLayer, getRiskIQDLayer, tileLayer } from "./aux/layers";
 
 const NR_DAYS_PRIOR = 7;
 const PLAY_INTERVAL = 500; // milisecons intervall between days animation
@@ -18,15 +18,43 @@ let map;
 var layerRisk;
 var layerConcelhos;
 
-mapMode.subscribe(_ => {
-    if (layerRisk) {
-        layerRisk.setStyle(getStyle)
+const removeLayerIfNeeded = (layer) => {
+    if(map.hasLayer(layer)) {
+        map.removeLayer(layer)
     }
+}
+
+const addLayerIfNeeded = (layer) => {
+    if (!map.hasLayer(layer))
+        layer.addTo(map)
+}
+
+const handleMapMode = (mode) => {
+    setLayerStyles()
+    if (mode.isSAHMap) {
+        removeLayerIfNeeded(layerRisk)
+    } else {
+        addLayerIfNeeded(layerRisk)
+    }
+}
+
+const setLayerStyles = () => {
+    layerConcelhos.setStyle(concelhosStyle)
+    layerRisk.setStyle(riskIqdStyle)
+}
+
+mapMode.subscribe(mode => {
+    if (!(layerRisk && layerConcelhos && map))
+        return;
+
+    handleMapMode(mode)    
 })
 
-function getStyle(feature) {
-    return style(feature, $mapMode.isRiskMap);
-}
+const riskIqdStyle = feature => style.riskIqd.getStyle(feature, $mapMode)
+
+const concelhosStyle = (feature) => style.concelhos.getStyle(
+        $mapMode, 
+        getConcelhoSahValue(feature.properties.NAME_2))
 
 function getStayAtHomeInfo() {
     fetch("http://localhost:9000/sah.php?date=2020-10-27")
@@ -35,34 +63,52 @@ function getStayAtHomeInfo() {
 }
 
 function configureEventListeners() {
-    layerRisk.on("mouseover", (e) => {
-        e.layer.setStyle({ fillColor: "#7d7d7d" })
+
+    const updateInfo = (e) => {
         const geoProps = getGeoProps(e.latlng, layerConcelhos);
         if (geoProps) {
             mapInfo.setState({...geoProps, ...e.layer.feature.properties})
         } else {
             mapInfo.reset();
         }
+    }
+
+    layerRisk.on("mouseover", (e) => {
+        e.layer.setStyle({ fillColor: "#7d7d7d" })
+        updateInfo(e)
     })
 
     layerRisk.on("mouseout", (e) => {
-        e.layer.setStyle({ fillColor: getColorFor(e.layer.feature.properties, $mapMode.isRiskMap) })
+        e.layer.setStyle({ fillColor: style.riskIqd.getColor(e.layer.feature.properties, $mapMode) })
         mapInfo.reset();
     })
+
+    layerConcelhos.on("mouseover", e => {
+        if (!$mapMode.isSAHMap) return;
+        e.layer.setStyle({ fillColor: "rgb(0, 40, 150)" })
+        updateInfo(e)
+    })
+
+    layerConcelhos.on("mouseout", (e) => {
+        if (!$mapMode.isSAHMap) return;
+        e.layer.setStyle({ fillColor: style.concelhos.getColor($mapMode, getConcelhoSahValue(e.layer.feature.properties.NAME_2)) })
+        mapInfo.reset();
+    })
+}
+
+function getConcelhoSahValue(concelho, asString=false) {
+    const cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
+    var sahConcelho = $sahInfo.filter(item => item.concelho === cn)[0]
+    return sahConcelho ? asString ? (sahConcelho.sah * 100).toFixed(0) + "%" : sahConcelho.sah : "N/A"
 }
 
 function getGeoProps(coords, layer) {
     const point = leafletPip.pointInLayer(coords,layer)[0];
     if (point) {
         let props = point.feature.properties;
-        const sah = ((concelho) => {
-            const cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
-            var sahConcelho = $sahInfo.filter(item => item.concelho === cn)[0]
-            return sahConcelho ? (sahConcelho.sah * 100).toFixed(0) + "%" : "N/A"
-        })(props.NAME_2);
         return {
             concelho: `${props.NAME_1} - ${props.NAME_2}`,
-            sah
+            sah: getConcelhoSahValue(props.NAME_2, true)
         }
     }
 }
@@ -73,18 +119,21 @@ function render() {
     
     getStayAtHomeInfo();
 
-    getConcelhosLayer(layer => {
+    getConcelhosLayer(concelhosStyle, layer => {
         layerConcelhos = layer;
-        layer.addTo(map)    
+        layer.addTo(map)
     })
 
-    getRiskIQDLayer(getStyle, layer => {
+    getRiskIQDLayer(riskIqdStyle, layer => {
         layerRisk = layer;
         layer.addTo(map)
         loading.setState(false);
 
         configureEventListeners();
+        
     })
+
+    tileLayer.addTo(map);
 }
 
 function resizeMap() {
