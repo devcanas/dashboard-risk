@@ -1,8 +1,11 @@
 <script>
     import ColorScale from "./ColorScale";
     import Info from "./Info";
-    import { isRiskMap } from "../../../stores";
+    import { mapMode } from "../../../stores";
 </script>
 
-<ColorScale risk={$isRiskMap} idq={!$isRiskMap} />
 <Info />
+<ColorScale 
+    risk={$mapMode.isRiskMap} 
+    idq={$mapMode.isIDQMap}
+    sah={$mapMode.isSAHMap} />

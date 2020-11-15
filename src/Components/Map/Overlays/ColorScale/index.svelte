@@ -2,6 +2,7 @@
     import Wrapper from "../Wrapper";
     export let risk = false;
     export let idq = false;
+    export let sah = false;
 </script>
 
 <style src="./style.scss">
@@ -15,7 +16,9 @@
                 <span>Risco</span><br/>
                 <span class="color-scale-context">por 100.000 habitantes</span>
             {:else if idq}
-                Incerteza 
+                Incerteza
+            {:else if sah}
+                Stay@Home
             {/if}
         </div>
         <div class="color-scale-figures">

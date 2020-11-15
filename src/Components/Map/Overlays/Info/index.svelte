@@ -1,7 +1,6 @@
 <script>
     import Wrapper from "../Wrapper";
-    import { info } from "../../../../stores";
-import { dataset_dev } from "svelte/internal";
+    import { mapInfo } from "../../../../stores";
 
     const months = {
         0: 'Janeiro',
@@ -31,13 +30,13 @@ import { dataset_dev } from "svelte/internal";
 <Wrapper topRight>
     <div class="info-wrapper">
             <span class="info-label bold">{prettyDate}</span><br/>
-        {#if !$info.edited }
+        {#if !$mapInfo.edited }
             <span class="info-label">Passe por cima do mapa</span>
         {:else}
-            <span class="info-label">Concelho: {$info.concelho}</span><br/>
-            <span class="info-label">Risco: {Math.round($info.Risk)}</span><br/>
-            <span class="info-label">Incerteza: {Math.round($info.IQD)}</span><br/>
-            <span class="info-label">Fica em casa: {$info.FicarEmCasa}</span>
+            <span class="info-label">Concelho: {$mapInfo.concelho}</span><br/>
+            <span class="info-label">Risco: {Math.round($mapInfo.Risk)}</span><br/>
+            <span class="info-label">Incerteza: {Math.round($mapInfo.IQD)}</span><br/>
+            <span class="info-label">Fica em casa: {$mapInfo.sah}</span>
         {/if }
     </div>
 </Wrapper>
