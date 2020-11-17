@@ -16,7 +16,8 @@
                 Risco<br/>
                 <span class="color-scale-context">por 100.000 habitantes</span>
             {:else if idq}
-                Incerteza
+                Incerteza<br/>
+                <span class="color-scale-context">por 100.000 habitantes</span>
             {:else if sah}
                 Stay@Home
             {/if}
