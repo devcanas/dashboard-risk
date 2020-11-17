@@ -4,7 +4,7 @@ const layer = (location, style, cb) => {
     .then(data => { cb(L.geoJSON(data, { style })) })
 }
 
-export const getRiskIQDLayer = (style, cb) => layer("/data/2020_10_27_risk_idq.js", style, cb);
+export const getRiskIQDLayer = (endpoint, style, cb) => layer(endpoint, style, cb);
 export const getConcelhosLayer = (style, cb) => layer("/data/concelhos-portugal_0_001.js", style, cb)
 
 export const tileLayer = L.tileLayer(

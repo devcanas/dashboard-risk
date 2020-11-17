@@ -1,17 +1,12 @@
 <script>
 import Overlays from "./Overlays";
 import LoadingSpinner from "@Components/LoadingSpinner";
-import { mapMode, mapInfo, sahInfo, loading } from "../../stores";
+import { mapMode, mapInfo, sahInfo, loading, availableDates } from "../../stores";
 import leafletPip from "@mapbox/leaflet-pip";
 import style from "./aux/layers/style";
 import createMap from "./aux/createMap";
 import { getConcelhosLayer, getRiskIQDLayer, tileLayer } from "./aux/layers";
-
-const NR_DAYS_PRIOR = 7;
-const PLAY_INTERVAL = 500; // milisecons intervall between days animation
-var playIntervalObj;
-var maxRisk = 0;
-var maxIQD = 0;
+import { onMount } from "svelte";
 
 // layers
 let map;
@@ -19,13 +14,13 @@ var layerRisk;
 var layerConcelhos;
 
 const removeLayerIfNeeded = (layer) => {
-    if(map.hasLayer(layer)) {
+    if(map && map.hasLayer(layer)) {
         map.removeLayer(layer)
     }
 }
 
 const addLayerIfNeeded = (layer) => {
-    if (!map.hasLayer(layer))
+    if (map && !map.hasLayer(layer))
         layer.addTo(map)
 }
 
@@ -35,6 +30,7 @@ const handleMapMode = (mode) => {
         removeLayerIfNeeded(layerRisk)
     } else {
         addLayerIfNeeded(layerRisk)
+        layerConcelhos.bringToFront();
     }
 }
 
@@ -43,36 +39,56 @@ const setLayerStyles = () => {
     layerRisk.setStyle(riskIqdStyle)
 }
 
+availableDates.subscribe(dates => {
+
+    const endpointFromSelectedDate = ((date) => {
+        const dateStr = date.split("-").join("_");
+        return "data/" + dateStr + "_risk_idq.js";
+    })(dates.selectedDate);
+
+    getRiskIQDLayer(endpointFromSelectedDate, riskIqdStyle, layer => {
+        removeLayerIfNeeded(layerRisk);
+        layerRisk = layer;
+        ($mapMode.isRiskMap || $mapMode.isIDQMap) && layerRisk.addTo(map);
+        layer.bringToBack();
+        configureEventListenersForRisk();
+        loading.setState(false);
+    })
+})
+
+sahInfo.subscribe(_ => {
+    getConcelhosLayer(concelhosStyle, layer => {
+        removeLayerIfNeeded(layerConcelhos);
+        layerConcelhos = layer;
+        layer.addTo(map);
+        layer.bringToFront();
+        configureEventListenersForConcelhos();
+    })
+})
+
 mapMode.subscribe(mode => {
     if (!(layerRisk && layerConcelhos && map))
         return;
 
-    handleMapMode(mode)    
+    handleMapMode(mode)
 })
 
 const riskIqdStyle = feature => style.riskIqd.getStyle(feature, $mapMode)
 
 const concelhosStyle = (feature) => style.concelhos.getStyle(
-        $mapMode, 
+        $mapMode,
         getConcelhoSahValue(feature.properties.NAME_2))
 
-function getStayAtHomeInfo() {
-    fetch("http://localhost:9000/sah.php?date=2020-10-27")
-    .then(res => res.json())
-    .then(data => sahInfo.setState(data))
+const updateInfo = (e) => {
+    const geoProps = getGeoProps(e.latlng, layerConcelhos);
+    if (geoProps) {
+        mapInfo.setState({...geoProps, ...e.layer.feature.properties})
+    } else {
+        mapInfo.reset();
+    }
 }
 
-function configureEventListeners() {
-
-    const updateInfo = (e) => {
-        const geoProps = getGeoProps(e.latlng, layerConcelhos);
-        if (geoProps) {
-            mapInfo.setState({...geoProps, ...e.layer.feature.properties})
-        } else {
-            mapInfo.reset();
-        }
-    }
-
+function configureEventListenersForRisk() {
     layerRisk.on("mouseover", (e) => {
         e.layer.setStyle({ fillColor: "#7d7d7d" })
         updateInfo(e)
@@ -82,7 +98,9 @@ function configureEventListeners() {
         e.layer.setStyle({ fillColor: style.riskIqd.getColor(e.layer.feature.properties, $mapMode) })
         mapInfo.reset();
     })
+}
 
+function configureEventListenersForConcelhos() {
     layerConcelhos.on("mouseover", e => {
         if (!$mapMode.isSAHMap) return;
         e.layer.setStyle({ fillColor: "rgb(0, 40, 150)" })
@@ -97,7 +115,7 @@ function configureEventListeners() {
 }
 
 function getConcelhoSahValue(concelho, asString=false) {
-    const cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
+    let cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
     var sahConcelho = $sahInfo.filter(item => item.concelho === cn)[0]
     return sahConcelho ? asString ? (sahConcelho.sah * 100).toFixed(0) + "%" : sahConcelho.sah : "N/A"
 }
@@ -113,27 +131,11 @@ function getGeoProps(coords, layer) {
     }
 }
 
-function render() {
+onMount(()=>{
     loading.setState(true);
     map = createMap()
-    
-    getConcelhosLayer(concelhosStyle, layer => {
-        layerConcelhos = layer;
-        layer.addTo(map)
-    })
-
-    getRiskIQDLayer(riskIqdStyle, layer => {
-        layerRisk = layer;
-        layer.addTo(map)
-        loading.setState(false);
-
-        configureEventListeners();
-    })
-
     tileLayer.addTo(map);
-
-    getStayAtHomeInfo();
-}
+})
 
 function resizeMap() {
     if(map) {
@@ -148,7 +150,7 @@ function resizeMap() {
 
 <svelte:window on:resize={resizeMap} />
 <div class="map-wrapper">
-    <div id="covid-risk-map" use:render />
+    <div id="covid-risk-map" />
     <Overlays />
     <LoadingSpinner />
 </div>

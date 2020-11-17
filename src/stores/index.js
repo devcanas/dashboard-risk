@@ -1,4 +1,5 @@
 import { 
+    createAvailableDatesStore,
     createMapInfoStore,
     createMapLoadingStore,
     createMapModeStore,
@@ -9,3 +10,4 @@ export const loading = createMapLoadingStore();
 export const mapMode = createMapModeStore();
 export const mapInfo = createMapInfoStore();
 export const sahInfo = createMapSAHInfoStore();
+export const availableDates = createAvailableDatesStore();

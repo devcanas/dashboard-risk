@@ -59,17 +59,19 @@ export const colorForRiskIqd = (properties, mode) => {
 }
 
 export const concelhosStyle = (mode, value) => ({ 
-    color: "#fff",
+    color: "#ccc",
     fillColor: colorForConcelhos(mode, value),
     fillOpacity: 0.7,
     weight: 0.5,
-    opacity: 1
+    opacity: 1,
+    interactive: mode.isSAHMap
 })
 
 export const colorForConcelhos = (mode, value) => {
-    console.log(value)
-    if (mode.isSAHMap) {
+    if (mode.isSAHMap && value !== "N/A") {
         return getCColor(value)
+    } else if (mode.isSAHMap && value === "N/A") {
+        return "rgb(0,0,0)";
     } else {
         return "rgba(0,0,0,0)"
     }
