@@ -46,3 +46,20 @@ export const Locations = [
     zoom: 8,
   },
 ];
+
+const prod = false;
+const devServer = "http://localhost:9000";
+const prodServer = "http://covid.vps.tecnico.ulisboa.pt";
+const server = prod ? prodServer : devServer;
+const availableDates = `${server}/dates.php`;
+const sah = `${server}/sah.php?date=`;
+const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
+const risk = (date) =>
+  `${prod ? server : ""}/data/${date.split("-").join("_")}_risk_idq.js`;
+
+export const Endpoints = {
+  availableDates,
+  sah,
+  concelhos,
+  risk,
+};

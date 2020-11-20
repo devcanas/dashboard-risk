@@ -9,14 +9,12 @@
     availableDates,
     mapLocation,
   } from "../stores";
-  import style from "./map/aux/layers/style";
-  import createMap from "./map/aux/createMap";
-  import {
-    getConcelhosLayer,
-    getRiskIQDLayer,
-    tileLayer,
-  } from "./map/aux/layers";
+  import style from "./aux/style";
+  import createMap from "./aux/createMap";
+  import { getConcelhoSahValue, getGeoProps } from "./aux/mapUtils";
   import { onMount } from "svelte";
+  import FetchService from "../FetchService";
+  import { Locations } from "../constants";
 
   // layers
   let map;
@@ -51,26 +49,14 @@
   availableDates.subscribe((dates) => {
     if (dates.selectedDate === null) return;
 
-    const endpointFromSelectedDate = ((date) => {
-      const dateStr = date.split("-").join("_");
-      return "data/" + dateStr + "_risk_idq.js";
-    })(dates.selectedDate);
-
-    getRiskIQDLayer(
-      endpointFromSelectedDate,
-      riskIqdStyle,
-      (layer) => {
-        removeLayerIfNeeded(layerRisk);
-        layerRisk = layer;
-        ($mapMode.isRiskMap || $mapMode.isIDQMap) && layerRisk.addTo(map);
-        layer.bringToBack();
-        configureEventListenersForRisk();
-        loading.setState(false);
-      },
-      (_) => {
-        loading.setState(false);
-      }
-    );
+    FetchService.getRiskIQDLayer(dates.selectedDate, riskIqdStyle, (layer) => {
+      removeLayerIfNeeded(layerRisk);
+      layerRisk = layer;
+      ($mapMode.isRiskMap || $mapMode.isIDQMap) && layerRisk.addTo(map);
+      layer.bringToBack();
+      configureEventListenersForRisk();
+      loading.setState(false);
+    });
   });
 
   sahInfo.subscribe((_) => {
@@ -79,7 +65,6 @@
 
   mapMode.subscribe((mode) => {
     if (!(layerRisk && layerConcelhos && map)) return;
-
     handleMapMode(mode);
   });
 
@@ -92,11 +77,11 @@
   const concelhosStyle = (feature) =>
     style.concelhos.getStyle(
       $mapMode,
-      getConcelhoSahValue(feature.properties.NAME_2)
+      getConcelhoSahValue(feature.properties.NAME_2, $sahInfo)
     );
 
   const updateInfo = (e) => {
-    const geoProps = getGeoProps(e.latlng, layerConcelhos);
+    const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
     if (geoProps) {
       mapInfo.setState({ ...geoProps, ...e.layer.feature.properties });
     } else {
@@ -130,59 +115,26 @@
       e.layer.setStyle({
         fillColor: style.concelhos.getColor(
           $mapMode,
-          getConcelhoSahValue(e.layer.feature.properties.NAME_2)
+          getConcelhoSahValue(e.layer.feature.properties.NAME_2, $sahInfo)
         ),
       });
       mapInfo.reset();
     });
   }
 
-  function getConcelhoSahValue(concelho, asString = false) {
-    let cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
-    cn =
-      concelho === "Sobral de Monte Agraço"
-        ? "Sobral de Monte Agraco"
-        : concelho;
-
-    const sahConcelho = $sahInfo.filter(
-      (item) => item.concelho.toUpperCase() === cn.toUpperCase()
-    );
-    return sahConcelho[0]
-      ? asString
-        ? (sahConcelho[0].sah * 100).toFixed(0) + "%"
-        : sahConcelho[0].sah
-      : "N/A";
-  }
-
-  function getGeoProps(coords, layer) {
-    const point = leafletPip.pointInLayer(coords, layer)[0];
-    if (point) {
-      let props = point.feature.properties;
-      return {
-        concelho: `${props.NAME_1} - ${props.NAME_2}`,
-        sah: getConcelhoSahValue(props.NAME_2, true),
-      };
-    }
-  }
+  const setupConcelhosLayer = (layer) => {
+    layerConcelhos = layer;
+    layer.addTo(map);
+    layer.bringToFront();
+    configureEventListenersForConcelhos();
+  };
 
   onMount(() => {
+    const defaultLocation = Locations.filter((loc) => loc.default)[0];
     loading.setState(true);
-    map = createMap();
-    tileLayer.addTo(map);
-
-    getConcelhosLayer(concelhosStyle, (layer) => {
-      layerConcelhos = layer;
-      layer.addTo(map);
-      layer.bringToFront();
-      configureEventListenersForConcelhos();
-    });
+    map = createMap(defaultLocation);
+    FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
   });
-
-  function resizeMap() {
-    if (map) {
-      map.invalidateSize();
-    }
-  }
 </script>
 
 <style>
@@ -198,7 +150,6 @@
   }
 </style>
 
-<svelte:window on:resize={resizeMap} />
 <div class="map-wrapper">
   <div id="covid-risk-map" />
   <Overlays />
