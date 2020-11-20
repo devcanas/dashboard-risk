@@ -1,8 +1,7 @@
-import App from './App/index.svelte';
-import './Assets/css/global.css';
+import App from "./App.svelte";
 
 const app = new App({
-    target: document.body
+  target: document.body,
 });
 
 window.app = app;
