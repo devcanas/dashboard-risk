@@ -1,43 +1,42 @@
-<style>
-.type-toggle {
-  display: flex;
-  justify-content: space-between;
-  margin-right: 20px;
-  background-color: white;
-  border-radius: 22px;
-}
-
-span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  height: 100%;
-  padding: 7px 10px;
-  border-radius: 20px;
-  font-size: 15px;
-  color: #333;
-}
-
-.selected {
-  background-color: rgb(105, 154, 187);
-  color: white;
-  transition-duration: 0.5s;
-  box-shadow: 0 0 5px -1px #555;
-}
-</style>
-
 <script>
-export let items;
-export let selected;
-export let onClick;
+  export let items;
+  export let selected;
+  export let onClick;
 </script>
+
+<style>
+  .type-toggle {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 20px;
+    background-color: white;
+    border-radius: 22px;
+  }
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    height: 100%;
+    padding: 7px 10px;
+    border-radius: 20px;
+    font-size: 15px;
+    color: #333;
+  }
+
+  .selected {
+    background-color: rgb(105, 154, 187);
+    color: white;
+    transition-duration: 0.5s;
+    box-shadow: 0 0 5px -1px #555;
+  }
+</style>
 
 <div class="type-toggle">
   {#each items as item (item.label)}
     <span
-      on:click="{(_) => onClick(item)}"
-      class="{selected(item) ? 'selected' : ''}"
-    >{item.label}</span>
+      on:click={(_) => onClick(item)}
+      class={selected(item) ? 'selected' : ''}>{item.label}</span>
   {/each}
 </div>
