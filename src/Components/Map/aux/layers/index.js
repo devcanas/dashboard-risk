@@ -1,10 +1,11 @@
-const layer = (location, style, cb) => {
+const layer = (location, style, cb, err) => {
     fetch(location)
     .then(res => res.json())
     .then(data => { cb(L.geoJSON(data, { style })) })
+    .catch(_ => err())
 }
 
-export const getRiskIQDLayer = (endpoint, style, cb) => layer(endpoint, style, cb);
+export const getRiskIQDLayer = (endpoint, style, cb, err) => layer(endpoint, style, cb, err);
 export const getConcelhosLayer = (style, cb) => layer("/data/concelhos-portugal_0_001.js", style, cb)
 
 export const tileLayer = L.tileLayer(

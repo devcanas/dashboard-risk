@@ -20,10 +20,15 @@
     })
 
     availableDates.subscribe(newData => {
+        
         const endpoint = `http://covid.vps.tecnico.ulisboa.pt/sah.php?date=${newData.selectedDate}`;
-        fetch(endpoint)
+        
+        newData.selectedDate && fetch(endpoint)
         .then(res => res.json())
-        .then(sah => sahInfo.setState(sah))
+        .then(sah => {
+            console.log("got new data")
+            sahInfo.setState(sah)
+        })
         .catch(err => console.log(`There was a problem getting the mobility data for the date: ${newData.selectedDate}.\n`, err))
     })
 

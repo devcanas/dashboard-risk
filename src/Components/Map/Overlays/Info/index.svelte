@@ -37,15 +37,18 @@
     let formattedSelected = prettyFormat(new Date($availableDates.selectedDate))
 
     const dateFromString = (str) => {
+        if (str === null) return;
         const parts = str.split("-")
         return new Date(parts[0], parts[1] - 1, parts[2])
     }
+
+    /* $availableDates.dates.includes(shortFormat(date)) */
 </script>
 
 <style src="./style.scss">
 
 </style>
-
+{#if $availableDates.selectedDate !== null}
 <Wrapper topRight>
     <div class="info-wrapper">
         <div class="date-picker-wrapper">
@@ -55,11 +58,11 @@
                     if (dateStr === $availableDates.selectedDate) return;
                     return availableDates.selectDate(dateStr);
                 }}
-                bind:formattedSelected 
-                start={dateFromString($availableDates.dates[0] || "2020-10-27")}
+                bind:formattedSelected
+                start={dateFromString("2020-01-01")}
                 end={dateFromString($availableDates.dates[$availableDates.dates.length - 1] || "2020-10-27")}
                 selected={new Date($availableDates.selectedDate)}
-                selectableCallback={date => $availableDates.dates.includes(shortFormat(date))}
+                selectableCallback={date => true}
                 format={prettyFormat}>
                 <button class='custom-button'>{formattedSelected}</button>
             </DatePicker>
@@ -74,3 +77,4 @@
         {/if }
     </div>
 </Wrapper>
+{/if}

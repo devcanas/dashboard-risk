@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 const initialState = {
-    selectedDate: "2020-10-26",
+    selectedDate: null,
     dates: []
 }
 

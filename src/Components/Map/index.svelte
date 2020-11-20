@@ -7,6 +7,7 @@ import style from "./aux/layers/style";
 import createMap from "./aux/createMap";
 import { getConcelhosLayer, getRiskIQDLayer, tileLayer } from "./aux/layers";
 import { onMount } from "svelte";
+import { SSL_OP_CIPHER_SERVER_PREFERENCE } from "constants";
 
 // layers
 let map;
@@ -25,13 +26,14 @@ const addLayerIfNeeded = (layer) => {
 }
 
 const handleMapMode = (mode) => {
-    setLayerStyles()
+    
     if (mode.isSAHMap) {
         removeLayerIfNeeded(layerRisk)
     } else {
         addLayerIfNeeded(layerRisk)
         layerConcelhos.bringToFront();
     }
+    setLayerStyles()
 }
 
 const setLayerStyles = () => {
@@ -41,9 +43,11 @@ const setLayerStyles = () => {
 
 availableDates.subscribe(dates => {
 
+    if (dates.selectedDate === null) return;
+
     const endpointFromSelectedDate = ((date) => {
         const dateStr = date.split("-").join("_");
-        return "data/" + dateStr + "_risk_idq.js";
+        return "http://covid.vps.tecnico.ulisboa.pt/data/" + dateStr + "_risk_idq.js";
     })(dates.selectedDate);
 
     getRiskIQDLayer(endpointFromSelectedDate, riskIqdStyle, layer => {
@@ -53,17 +57,14 @@ availableDates.subscribe(dates => {
         layer.bringToBack();
         configureEventListenersForRisk();
         loading.setState(false);
+    }, _ => {
+        loading.setState(false);
     })
 })
 
-sahInfo.subscribe(_ => {
-    getConcelhosLayer(concelhosStyle, layer => {
-        removeLayerIfNeeded(layerConcelhos);
-        layerConcelhos = layer;
-        layer.addTo(map);
-        layer.bringToFront();
-        configureEventListenersForConcelhos();
-    })
+sahInfo.subscribe(newInfo => {
+    layerConcelhos && layerConcelhos.setStyle(concelhosStyle)
+    console.log("data updated: ", newInfo[0])
 })
 
 mapMode.subscribe(mode => {
@@ -115,9 +116,12 @@ function configureEventListenersForConcelhos() {
 }
 
 function getConcelhoSahValue(concelho, asString=false) {
+    console.log("getting sah");
     let cn = concelho === "Ponte de Sôr" ? "Ponte de Sor" : concelho;
-    var sahConcelho = $sahInfo.filter(item => item.concelho === cn)[0]
-    return sahConcelho ? asString ? (sahConcelho.sah * 100).toFixed(0) + "%" : sahConcelho.sah : "N/A"
+    cn = concelho === "Sobral de Monte Agraço" ? "Sobral de Monte Agraco" : concelho;
+
+    const sahConcelho = $sahInfo.filter(item => item.concelho.toUpperCase() === cn.toUpperCase())
+    return sahConcelho[0] ? asString ? (sahConcelho[0].sah * 100).toFixed(0) + "%" : sahConcelho[0].sah : "N/A"
 }
 
 function getGeoProps(coords, layer) {
@@ -135,6 +139,13 @@ onMount(()=>{
     loading.setState(true);
     map = createMap()
     tileLayer.addTo(map);
+
+    getConcelhosLayer(concelhosStyle, layer => {
+        layerConcelhos = layer;
+        layer.addTo(map);
+        layer.bringToFront();
+        configureEventListenersForConcelhos();
+    })
 })
 
 function resizeMap() {
