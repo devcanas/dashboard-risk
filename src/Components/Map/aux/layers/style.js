@@ -12,7 +12,7 @@ var colors = [
 ];
 
 function getColor(d) {
-    return d < 100
+  return d < 100
     ? colors[0]
     : d < 200
     ? colors[1]
@@ -34,7 +34,7 @@ function getColor(d) {
 }
 
 function getCColor(d) {
-    return d < 0.4
+  return d < 0.4
     ? colors[0]
     : d < 0.5
     ? colors[2]
@@ -42,48 +42,46 @@ function getCColor(d) {
     ? colors[4]
     : d < 0.7
     ? colors[6]
-    : colors[8]
+    : colors[8];
 }
 
 export const riskIqdStyle = (feature, mode) => ({
-    fillColor: colorForRiskIqd(feature.properties, mode),
-    weight: 0,
-    dashArray: "0",
-    fillOpacity: 1,
-})
+  fillColor: colorForRiskIqd(feature.properties, mode),
+  weight: 0,
+  dashArray: "0",
+  fillOpacity: 1,
+});
 
 export const colorForRiskIqd = (properties, mode) => {
-    return mode.isRiskMap
-        ? getColor(properties.Risk)
-        : getColor(properties.IQD);
-}
+  return mode.isRiskMap ? getColor(properties.Risk) : getColor(properties.IQD);
+};
 
-export const concelhosStyle = (mode, value) => ({ 
-    color: "#ccc",
-    fillColor: colorForConcelhos(mode, value),
-    fillOpacity: 0.7,
-    weight: 0.5,
-    opacity: 1,
-    interactive: mode.isSAHMap
-})
+export const concelhosStyle = (mode, value) => ({
+  color: "#ccc",
+  fillColor: colorForConcelhos(mode, value),
+  fillOpacity: 0.7,
+  weight: 0.5,
+  opacity: 1,
+  interactive: mode.isSAHMap,
+});
 
 export const colorForConcelhos = (mode, value) => {
-    if (mode.isSAHMap && value !== "N/A") {
-        return getCColor(value)
-    } else if (mode.isSAHMap && value === "N/A") {
-        return "rgb(0,0,0)";
-    } else {
-        return "rgba(0,0,0,0)"
-    }
-}
+  if (mode.isSAHMap && value !== "N/A") {
+    return getCColor(value);
+  } else if (mode.isSAHMap && value === "N/A") {
+    return "rgb(0,0,0)";
+  } else {
+    return "rgba(0,0,0,0)";
+  }
+};
 
 export default {
-    riskIqd: {
-        getStyle: riskIqdStyle,
-        getColor: colorForRiskIqd
-    },
-    concelhos: {
-        getStyle: concelhosStyle,
-        getColor: colorForConcelhos
-    }
-}
+  riskIqd: {
+    getStyle: riskIqdStyle,
+    getColor: colorForRiskIqd,
+  },
+  concelhos: {
+    getStyle: concelhosStyle,
+    getColor: colorForConcelhos,
+  },
+};
