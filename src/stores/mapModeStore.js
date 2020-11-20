@@ -1,22 +1,14 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 import { MapModes } from "../constants";
 
-const initialState = {
-    isRiskMap: true,
-    isIDQMap: false,
-    isSAHMap: false
-}
+const defaultState = MapModes.filter((mm) => mm.default)[0];
 
-const { subscribe, set, update } = writable(initialState);
+const { subscribe, set, update } = writable(defaultState);
 
 const mapModeStore = () => ({
-    subscribe,
-    setMapMode: newMode => update(_ => ({
-        isRiskMap: newMode === MapModes.riskMap,
-        isIDQMap: newMode === MapModes.idqMap,
-        isSAHMap: newMode === MapModes.sahMap
-    })),
-    reset: () => set(MapModes.default)
+  subscribe,
+  setState: (newMode) => update((_) => newMode),
+  reset: () => set(defaultState),
 });
 
 export default mapModeStore;

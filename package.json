@@ -1,50 +1,25 @@
 {
-  "name": "@pankod/svelte-boilerplate",
-  "author": "Pankod <info@pankod.com>",
-  "version": "0.0.1",
+  "name": "svelte-app",
+  "version": "1.0.0",
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack",
-    "build:inline": "cross-env NODE_ENV=production inline=true webpack",
-    "start:dev": "webpack-dev-server --content-base public",
-    "lint": "eslint -c .eslintrc --ext .svelte,.js src",
-    "format": "eslint -c .eslintrc --fix --ext .svelte,.js --fix src",
-    "format:prettier": "prettier --write src/**/{*.svelte,*.js}"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/plugin-transform-strict-mode": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
-    "@babel/register": "^7.12.1",
-    "autoprefixer": "^9.8.6",
-    "babel-loader": "^8.2.1",
-    "babel-plugin-add-module-exports": "^1.0.4",
-    "compression-webpack-plugin": "^6.1.1",
-    "cross-env": "^5.2.1",
-    "css-loader": "^2.1.1",
-    "html-webpack-inline-source-plugin": "0.0.10",
-    "html-webpack-plugin": "^3.2.0",
-    "mini-css-extract-plugin": "^0.6.0",
-    "node-sass": "^4.14.1",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-svelte": "^4.0.6",
-    "postcss-loader": "^3.0.0",
-    "sass": "^1.29.0",
-    "serve": "^11.3.2",
-    "style-loader": "^0.23.1",
-    "svelte": "^3.29.7",
-    "svelte-loader": "2.13.3",
-    "svelte-preprocess": "^2.16.0",
-    "timeUtils": "^2.0.0",
-    "webpack": "^4.44.2",
-    "webpack-bundle-analyzer": "^4.1.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-node-resolve": "^8.0.0",
+    "prettier": "^2.1.2",
+    "prettier-plugin-svelte": "^1.4.1",
+    "rollup": "^2.3.4",
+    "rollup-plugin-gzip": "^2.5.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^6.0.0",
+    "rollup-plugin-terser": "^7.0.0",
+    "svelte": "^3.0.0"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
-    "@mapbox/leaflet-pip": "^1.1.0",
-    "babel-plugin-inline-dotenv": "^1.6.0",
-    "sass-loader": "^10.1.0"
+    "sirv-cli": "^1.0.0",
+    "timeUtils": "^2.0.0"
   }
 }

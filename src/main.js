@@ -1,9 +1,7 @@
-import App from './App/index.svelte';
-import './Assets/css/global.css';
-require("@babel/polyfill");
+import App from "./App.svelte";
 
 const app = new App({
-    target: document.body
+  target: document.body,
 });
 
 window.app = app;
