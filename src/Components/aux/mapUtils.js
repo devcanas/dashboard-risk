@@ -14,5 +14,5 @@ export const getConcelhoSahValue = (concelho, sahInfo) => {
   const sahConcelho = sahInfo.filter(
     (item) => item.concelho.toUpperCase() === cn.toUpperCase()
   )[0];
-  return (sahConcelho && sahConcelho[0].sah) || "N/A";
+  return (sahConcelho && sahConcelho.sah) || "N/A";
 };

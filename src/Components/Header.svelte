@@ -22,7 +22,8 @@
   const downloadMapAsPng = () => {
     const imgUrl = document.querySelector("canvas").toDataURL("image/png");
     const a = document.getElementById("map-dl");
-    a.download = `${$mapLocation.label}_${$mapMode.label}_${$availableDates.selectedDate}`;
+    const download_name = `${$mapLocation.label}_${$mapMode.label}_${$availableDates.selectedDate}`;
+    a.download = download_name;
     a.href = imgUrl;
     a.click();
   };

@@ -4,7 +4,7 @@ const get = (endpoint, success, failure = (_) => {}) => {
   fetch(endpoint)
     .then((res) => res.json())
     .then((data) => success(data))
-    .catch((err) => failure(err));
+    .catch((err) => failure(err, endpoint));
 };
 
 const getAvailableDates = (success, fail) => {
