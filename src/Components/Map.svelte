@@ -108,9 +108,17 @@
     layerRisk = layer;
     layer.bringToBack();
     configureEventListenersForRisk();
+
+    // trying to figure out bug where will
+    // not load styles without this
+    setInterval(() => {
+      setLayerStyles();
+      loading.setState(false);
+    }, 300);
   };
 
   onMount(() => {
+    loading.setState(true);
     map = createMap(defaultLocation);
     FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
     FetchService.getRiskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
