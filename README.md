@@ -1,105 +1,42 @@
-*Looking for a shareable component template? Go here --> [sveltejs/component-template](https://github.com/sveltejs/component-template)*
+# Dashboard Risco Covid-19
 
----
+## Correr a app
 
-# svelte app
+Começar um servidor php na pasta public com
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
+- `php -S localhost:9000`
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+E de seguida:
 
-```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
-```
+- `npm install`
+- `npm run dev`
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+## Deploy para servidor
 
+Antes de fazer o deploy é preciso ir a pasta de constantes em src/constants.js e mudar a flag `prod` para true para mudar os endpoints que a app espera receber.
 
-## Get started
+De seguida:
 
-Install the dependencies...
+`npm run build`
 
-```bash
-cd svelte-app
-npm install
-```
+Fazendo scp do public/build, public/index.html e, caso haja alterações, dos ficheiros PHP.
 
-...then start [Rollup](https://rollupjs.org):
+(Não fazer scp da pasta data porque não é atualizada)
 
-```bash
-npm run dev
-```
+## geojson merge
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
+O output deste script (ainda não está no git) são dois ficheiros:
 
-By default, the server will only respond to requests from localhost. To allow connections from other computers, edit the `sirv` commands in package.json to include the option `--host 0.0.0.0`.
+- properties.js
+- riskIqd.js
 
-If you're using [Visual Studio Code](https://code.visualstudio.com/) we recommend installing the official extension [Svelte for VS Code](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode). If you are using other editors you may need to install a plugin in order to get syntax highlighting and intellisense.
+O primeiro ficheiro tem as propriedades para o risco e incerteza nas diferentes datas e o segundo tem o geojson com os poligonos e referencias para as propriedades.
 
-## Building and running in production mode
+## scripts auxiliares
 
-To create an optimised version of the app:
+Os seguintes ficheiros são ficheiros auxiliares para a tool
 
-```bash
-npm run build
-```
+- dates.php: vai buscar um array com todas as datas que temos para os dados de risco e incerteza
+- sah.php: que para uma determinada data vai buscar o valor do Stay@Home para todos os concelhos.
 
-You can run the newly built app with `npm run start`. This uses [sirv](https://github.com/lukeed/sirv), which is included in your package.json's `dependencies` so that the app will work when you deploy to platforms like [Heroku](https://heroku.com).
-
-
-## Single-page app mode
-
-By default, sirv will only respond to requests that match files in `public`. This is to maximise compatibility with static fileservers, allowing you to deploy your app anywhere.
-
-If you're building a single-page app (SPA) with multiple routes, sirv needs to be able to respond to requests for *any* path. You can make it so by editing the `"start"` command in package.json:
-
-```js
-"start": "sirv public --single"
-```
-
-## Using TypeScript
-
-This template comes with a script to set up a TypeScript development environment, you can run it immediately after cloning the template with:
-
-```bash
-node scripts/setupTypeScript.js
-```
-
-Or remove the script via:
-
-```bash
-rm scripts/setupTypeScript.js
-```
-
-## Deploying to the web
-
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+O ficheiro sah.php idealmente pode ser extendido para ir buscar os dados por concelho em vez de data e assim construirmos o grafico de evolução deste indicador.
