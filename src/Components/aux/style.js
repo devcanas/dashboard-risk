@@ -45,14 +45,15 @@ function getCColor(d) {
     : colors[8];
 }
 
-export const riskIqdStyle = (feature, mode) => ({
-  fillColor: colorForRiskIqd(feature.properties, mode),
+export const riskIqdStyle = (properties, mode) => ({
+  fillColor: colorForRiskIqd(properties, mode),
   weight: 0,
   dashArray: "0",
   fillOpacity: 1,
 });
 
 export const colorForRiskIqd = (properties, mode) => {
+  if (!properties || mode.id === "sahMap") return "rgba(0,0,0,0)";
   return mode.isRiskMap ? getColor(properties.Risk) : getColor(properties.IQD);
 };
 

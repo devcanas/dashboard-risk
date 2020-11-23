@@ -24,9 +24,11 @@ const getLayer = (endpoint = Endpoints.concelhos, style, cb) => {
     console.log
   );
 };
+const getProperties = (success, fail) =>
+  get(Endpoints.properties, success, console.log);
 
-export const getRiskIQDLayer = (date, style, cb) =>
-  getLayer(Endpoints.risk(date), style, cb);
+export const getRiskIQDLayer = (style, cb) =>
+  getLayer(Endpoints.risk, style, cb);
 export const getConcelhosLayer = (style, cb) =>
   getLayer(Endpoints.concelhos, style, cb);
 
@@ -35,6 +37,7 @@ const FetchService = {
   getSah,
   getRiskIQDLayer,
   getConcelhosLayer,
+  getProperties,
 };
 
 export default FetchService;

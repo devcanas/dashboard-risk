@@ -3,10 +3,14 @@
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
   import { onMount } from "svelte";
-  import { availableDates, sahInfo } from "./stores";
+  import { availableDates, sahInfo, riskProps } from "./stores";
   import FetchService from "./FetchService";
 
   onMount((_) => {
+    FetchService.getProperties((props) => {
+      riskProps.setState(props);
+    });
+
     FetchService.getAvailableDates((dates) => {
       availableDates.setState(dates);
       availableDates.selectDate(dates[dates.length - 1]);

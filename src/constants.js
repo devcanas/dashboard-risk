@@ -19,7 +19,7 @@ export const MapModes = [
     default: true,
     id: "sahMap",
     label: "Stay@Home",
-    isRiskMap: true,
+    isRiskMap: false,
     isIDQMap: false,
     isSAHMap: true,
   },
@@ -54,12 +54,15 @@ const server = prod ? prodServer : devServer;
 const availableDates = `${server}/dates.php`;
 const sah = `${server}/sah.php?date=`;
 const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
-const risk = (date) =>
-  `${prod ? server : ""}/data/${date.split("-").join("_")}_risk_idq.js`;
+const risk = `${prod ? server : ""}/build/riskIdq.js`;
+const properties = `${prod ? server : ""}/build/properties.js`;
 
 export const Endpoints = {
   availableDates,
   sah,
   concelhos,
   risk,
+  properties,
 };
+
+export const defaultLocation = Locations.filter((loc) => loc.default)[0];

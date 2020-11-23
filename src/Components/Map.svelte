@@ -8,71 +8,41 @@
     loading,
     availableDates,
     mapLocation,
+    riskProps,
   } from "../stores";
   import style from "./aux/style";
   import createMap from "./aux/createMap";
-  import { getConcelhoSahValue, getGeoProps } from "./aux/mapUtils";
+  import { getConcelhoSahValue, getGeoProps, getProps } from "./aux/mapUtils";
   import { onMount } from "svelte";
   import FetchService from "../FetchService";
-  import { Locations } from "../constants";
+  import { defaultLocation } from "../constants";
 
   // layers
   let map;
   var layerRisk;
   var layerConcelhos;
 
-  const removeLayerIfNeeded = (layer) => {
-    if (map && map.hasLayer(layer)) {
-      map.removeLayer(layer);
-    }
-  };
-
-  const addLayerIfNeeded = (layer) => {
-    if (map && !map.hasLayer(layer)) layer.addTo(map);
-  };
-
-  const handleMapMode = (mode) => {
-    if (mode.isSAHMap) {
-      removeLayerIfNeeded(layerRisk);
-    } else {
-      addLayerIfNeeded(layerRisk);
-      layerConcelhos.bringToFront();
-    }
-    setLayerStyles();
-  };
-
   const setLayerStyles = () => {
-    layerConcelhos.setStyle(concelhosStyle);
-    layerRisk.setStyle(riskIqdStyle);
+    layerConcelhos && layerConcelhos.setStyle(concelhosStyle);
+    layerRisk && layerRisk.setStyle(riskIqdStyle);
   };
 
-  availableDates.subscribe((dates) => {
-    if (dates.selectedDate === null) return;
-
-    FetchService.getRiskIQDLayer(dates.selectedDate, riskIqdStyle, (layer) => {
-      removeLayerIfNeeded(layerRisk);
-      layerRisk = layer;
-      ($mapMode.isRiskMap || $mapMode.isIDQMap) && layerRisk.addTo(map);
-      layer.bringToBack();
-      configureEventListenersForRisk();
-      loading.setState(false);
+  [sahInfo, mapMode, availableDates].forEach((store) => {
+    store.subscribe((_) => {
+      setLayerStyles();
     });
-  });
-
-  sahInfo.subscribe((_) => {
-    layerConcelhos && layerConcelhos.setStyle(concelhosStyle);
-  });
-
-  mapMode.subscribe((mode) => {
-    if (!(layerRisk && layerConcelhos && map)) return;
-    handleMapMode(mode);
   });
 
   mapLocation.subscribe(({ coords, zoom }) => {
     map && map.flyTo(coords, zoom, { duration: 1 });
   });
 
-  const riskIqdStyle = (feature) => style.riskIqd.getStyle(feature, $mapMode);
+  const propsFor = (layer) =>
+    getProps($riskProps, layer, $availableDates.selectedDate);
+
+  const riskIqdStyle = (feature) => {
+    return style.riskIqd.getStyle(propsFor(feature), $mapMode);
+  };
 
   const concelhosStyle = (feature) =>
     style.concelhos.getStyle(
@@ -80,24 +50,31 @@
       getConcelhoSahValue(feature.properties.NAME_2, $sahInfo)
     );
 
-  const updateInfo = (e) => {
-    const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
-    if (geoProps) {
-      mapInfo.setState({ ...geoProps, ...e.layer.feature.properties });
-    } else {
-      mapInfo.reset();
-    }
+  const geoProps = (e) =>
+    layerConcelhos && getGeoProps(e.latlng, layerConcelhos, $sahInfo);
+
+  const updateRiskInfo = (e) => {
+    const riskInfo = propsFor(e.layer.feature);
+    updateInfo(riskInfo, geoProps(e));
+  };
+
+  const updateConcelhoInfo = (e) => {
+    updateInfo(null, geoProps(e));
+  };
+
+  const updateInfo = (riskInfo, geoProps) => {
+    if (geoProps) mapInfo.setState({ ...riskInfo, ...geoProps });
+    else mapInfo.reset();
   };
 
   function configureEventListenersForRisk() {
     layerRisk.on("mouseover", (e) => {
       e.layer.setStyle({ fillColor: "#7d7d7d" });
-      updateInfo(e);
+      updateRiskInfo(e);
     });
-
     layerRisk.on("mouseout", (e) => {
       e.layer.setStyle({
-        fillColor: style.riskIqd.getColor(e.layer.feature.properties, $mapMode),
+        fillColor: style.riskIqd.getColor(propsFor(e.layer.feature), $mapMode),
       });
       mapInfo.reset();
     });
@@ -105,13 +82,10 @@
 
   function configureEventListenersForConcelhos() {
     layerConcelhos.on("mouseover", (e) => {
-      if (!$mapMode.isSAHMap) return;
       e.layer.setStyle({ fillColor: "rgb(0, 40, 150)" });
-      updateInfo(e);
+      updateConcelhoInfo(e);
     });
-
     layerConcelhos.on("mouseout", (e) => {
-      if (!$mapMode.isSAHMap) return;
       e.layer.setStyle({
         fillColor: style.concelhos.getColor(
           $mapMode,
@@ -123,17 +97,23 @@
   }
 
   const setupConcelhosLayer = (layer) => {
-    layerConcelhos = layer;
     layer.addTo(map);
+    layerConcelhos = layer;
     layer.bringToFront();
     configureEventListenersForConcelhos();
   };
 
+  const setupRiskIqdLayer = (layer) => {
+    layer.addTo(map);
+    layerRisk = layer;
+    layer.bringToBack();
+    configureEventListenersForRisk();
+  };
+
   onMount(() => {
-    const defaultLocation = Locations.filter((loc) => loc.default)[0];
-    loading.setState(true);
     map = createMap(defaultLocation);
     FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
+    FetchService.getRiskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
   });
 </script>
 

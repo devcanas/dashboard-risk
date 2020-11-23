@@ -5,6 +5,7 @@ import {
   createMapLoadingStore,
   createMapModeStore,
   createMapSAHInfoStore,
+  createRiskPropertiesStore,
 } from "./stores";
 
 export const loading = createMapLoadingStore();
@@ -13,3 +14,4 @@ export const mapInfo = createMapInfoStore();
 export const sahInfo = createMapSAHInfoStore();
 export const availableDates = createAvailableDatesStore();
 export const mapLocation = createLocationStore();
+export const riskProps = createRiskPropertiesStore();
