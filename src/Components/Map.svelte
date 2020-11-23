@@ -10,9 +10,13 @@
     mapLocation,
     riskProps,
   } from "../stores";
-  import style from "./aux/style";
-  import createMap from "./aux/createMap";
-  import { getConcelhoSahValue, getGeoProps, getProps } from "./aux/mapUtils";
+  import style from "./helpers/style";
+  import createMap from "./helpers/createMap";
+  import {
+    getConcelhoSahValue,
+    getGeoProps,
+    getProps,
+  } from "./helpers/mapUtils";
   import { onMount } from "svelte";
   import FetchService from "../FetchService";
   import { defaultLocation } from "../constants";
