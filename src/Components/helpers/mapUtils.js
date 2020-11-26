@@ -3,7 +3,8 @@ export const getGeoProps = (coords, layer, sahInfo) => {
   if (point) {
     let props = point.feature.properties;
     return {
-      concelho: `${props.NAME_1} - ${props.NAME_2}`,
+      concelho: props.NAME_2,
+      displayString: `${props.NAME_1} - ${props.NAME_2}`,
       sah: getConcelhoSahValue(props.NAME_2, sahInfo, true),
     };
   }

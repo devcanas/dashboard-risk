@@ -102,7 +102,7 @@
       {#if !$mapInfo.edited}
         <span class="info-label">Passe por cima do mapa</span>
       {:else}
-        <span class="info-label">Concelho: {$mapInfo.concelho}</span><br />
+        <span class="info-label">Concelho: {$mapInfo.displayString}</span><br />
         <span class="info-label">Risco:
           {Math.round($mapInfo.Risk) || '-'}</span><br />
         <span class="info-label">Incerteza:

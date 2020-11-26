@@ -2,19 +2,16 @@ import { writable } from "svelte/store";
 
 const defaultState = {
   concelho: "",
-  displayString: "",
-  Risk: 0,
-  IQD: 0,
-  sah: 0,
+  data: [],
   edited: false,
 };
 
 const { subscribe, set, update } = writable(defaultState);
 
-const infoStore = (_) => ({
+const sahChartStore = (_) => ({
   subscribe,
   setState: (newState) => update(() => ({ ...newState, edited: true })),
   reset: (_) => set(defaultState),
 });
 
-export default infoStore;
+export default sahChartStore;

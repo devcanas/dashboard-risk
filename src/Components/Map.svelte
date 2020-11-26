@@ -9,6 +9,7 @@
     availableDates,
     mapLocation,
     riskProps,
+    sahChart,
   } from "../stores";
   import style from "./helpers/style";
   import createMap from "./helpers/createMap";
@@ -100,6 +101,17 @@
     });
   }
 
+  const configureEventListenersForMap = () => {
+    map.on("click", (e) => {
+      const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
+      sahChart.setState({
+        edited: true,
+        concelho: geoProps.concelho,
+        data: [],
+      });
+    });
+  };
+
   const setupConcelhosLayer = (layer) => {
     layer.addTo(map);
     layerConcelhos = layer;
@@ -126,6 +138,7 @@
     map = createMap(defaultLocation);
     FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
     FetchService.getRiskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
+    configureEventListenersForMap();
   });
 </script>
 
