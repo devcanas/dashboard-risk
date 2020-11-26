@@ -127,10 +127,10 @@
 
     // trying to figure out bug where will
     // not load styles without this
-    setInterval(() => {
+    setTimeout(() => {
       setLayerStyles();
       loading.setState(false);
-    }, 300);
+    }, 1500);
   };
 
   onMount(() => {
