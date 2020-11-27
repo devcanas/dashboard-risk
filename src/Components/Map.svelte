@@ -21,6 +21,7 @@
   import { onMount } from "svelte";
   import FetchService from "../FetchService";
   import { defaultLocation } from "../constants";
+  import showChartFor from "./helpers/chartData";
 
   // layers
   let map;
@@ -32,7 +33,7 @@
     layerRisk && layerRisk.setStyle(riskIqdStyle);
   };
 
-  [sahInfo, mapMode, availableDates].forEach((store) => {
+  [sahInfo, mapMode, riskProps].forEach((store) => {
     store.subscribe((_) => {
       setLayerStyles();
     });
@@ -104,11 +105,7 @@
   const configureEventListenersForMap = () => {
     map.on("click", (e) => {
       const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
-      sahChart.setState({
-        edited: true,
-        concelho: geoProps.concelho,
-        data: [],
-      });
+      showChartFor(geoProps.concelho, sahChart);
     });
   };
 
@@ -124,13 +121,6 @@
     layerRisk = layer;
     layer.bringToBack();
     configureEventListenersForRisk();
-
-    // trying to figure out bug where will
-    // not load styles without this
-    setTimeout(() => {
-      setLayerStyles();
-      loading.setState(false);
-    }, 1500);
   };
 
   onMount(() => {

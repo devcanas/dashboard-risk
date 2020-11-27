@@ -13,11 +13,9 @@
     return view.runAsync();
   }
 
-  onMount(() => {
-    fetch("/test.json")
-      .then((res) => res.json())
-      .then((spec) => render(spec))
-      .catch(console.log);
+  sahChart.subscribe((chartData) => {
+    console.log(chartData);
+    chartData.data && render(chartData.data);
   });
 </script>
 
@@ -81,13 +79,18 @@
       </div>
       <div class="content">
         <div class="content-header">
-          <div class="chart-concelho-data">Evolução Stay@Home</div>
+          <div class="chart-concelho-data">
+            Evolução Stay@Home - Últimos 30 dias
+          </div>
           <div class="chart-concelho-description">Concelho</div>
           <div class="chart-concelho-name">{$sahChart.concelho}</div>
         </div>
         <div class="content-body">
-          <div id="concelho-chart" />
-          <div id="no-data">Não existem dados para este concelho.</div>
+          {#if $sahChart.data}
+            <div id="concelho-chart" />
+          {:else}
+            <div id="no-data">Não existem dados para este concelho.</div>
+          {/if}
         </div>
       </div>
     </div>

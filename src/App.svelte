@@ -3,12 +3,18 @@
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
   import { onMount } from "svelte";
-  import { availableDates, sahInfo, riskProps } from "./stores";
+  import { availableDates, sahInfo, riskProps, loading } from "./stores";
   import FetchService from "./FetchService";
+
+  availableDates.subscribe((newDates) => {
+    const date = newDates.selectedDate;
+    if (date) FetchService.getSah({ date }, sahInfo.setState);
+  });
 
   onMount((_) => {
     FetchService.getProperties((props) => {
       riskProps.setState(props);
+      loading.setState(false);
     });
 
     FetchService.getAvailableDates((dates) => {
@@ -16,8 +22,6 @@
       availableDates.selectDate(dates[dates.length - 1]);
     });
   });
-
-  $: FetchService.getSah($availableDates.selectedDate, sahInfo.setState);
 </script>
 
 <style>

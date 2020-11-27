@@ -48,18 +48,24 @@ export const Locations = [
 ];
 
 const prod = false;
-const devServer = "http://localhost:9000";
+const devServer = "http://covid-risk.com:5000";
 const prodServer = "http://covid.vps.tecnico.ulisboa.pt";
 const server = prod ? prodServer : devServer;
-const availableDates = `${server}/dates.php`;
-const sah = `${server}/sah.php?date=`;
+const availableDates = `${
+  prod ? server : "http://covid-risk.com:9000"
+}/dates.php`;
+const sahDate = `${prod ? server : "http://covid-risk.com:9000"}/sah.php?date=`;
+const sahConcelho = `${
+  prod ? server : "http://covid-risk.com:9000"
+}/sah.php?concelho_name=`;
 const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
-const risk = `${prod ? server : ""}/build/riskIdq.js`;
-const properties = `${prod ? server : ""}/build/properties.js`;
+const risk = `${server}/build/riskIdq.js`;
+const properties = `${server}/build/properties.js`;
 
 export const Endpoints = {
   availableDates,
-  sah,
+  sahDate,
+  sahConcelho,
   concelhos,
   risk,
   properties,

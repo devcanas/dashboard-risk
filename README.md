@@ -32,6 +32,10 @@ O output deste script (ainda não está no git) são dois ficheiros:
 
 O primeiro ficheiro tem as propriedades para o risco e incerteza nas diferentes datas e o segundo tem o geojson com os poligonos e referencias para as propriedades.
 
+## xlsx-to-json
+
+Este script serve para converter o xlsx dos dados da NOS para JSON.
+
 ## scripts auxiliares
 
 Os seguintes ficheiros são ficheiros auxiliares para a tool
