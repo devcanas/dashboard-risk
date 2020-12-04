@@ -1,5 +1,5 @@
 <script>
-  import { loading } from "../stores";
+  export let isLoading;
 </script>
 
 <style>
@@ -41,6 +41,6 @@
   }
 </style>
 
-<div class="loading-spinner-wrapper {$loading ? 'visible' : ''}">
+<div class="loading-spinner-wrapper {isLoading ? 'visible' : ''}">
   <img src="/images/spinner.png" alt="Loading spinner" />
 </div>

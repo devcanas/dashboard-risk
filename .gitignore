@@ -1,8 +1,8 @@
 /node_modules/
 
 /public/data
+/public/build
 bundle.*
-
 .DS_Store
 
 package-lock.json

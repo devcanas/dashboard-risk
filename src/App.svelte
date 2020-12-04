@@ -14,7 +14,7 @@
   onMount((_) => {
     FetchService.getProperties((props) => {
       riskProps.setState(props);
-      loading.setState(false);
+      loading.setState({ ...$loading, isLayerLoading: false });
     });
 
     FetchService.getAvailableDates((dates) => {

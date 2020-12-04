@@ -2,14 +2,14 @@ import {
   createAvailableDatesStore,
   createLocationStore,
   createMapInfoStore,
-  createMapLoadingStore,
+  createLoadingStore,
   createMapModeStore,
   createMapSAHInfoStore,
   createRiskPropertiesStore,
   createSahChartStore,
 } from "./stores";
 
-export const loading = createMapLoadingStore();
+export const loading = createLoadingStore();
 export const mapMode = createMapModeStore();
 export const mapInfo = createMapInfoStore();
 export const sahInfo = createMapSAHInfoStore();

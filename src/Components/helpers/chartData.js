@@ -1,4 +1,5 @@
 import FetchService from "../../FetchService";
+import { loading } from "../../stores";
 
 const makeVegaJSONFor = (concelhoData) => {
   const concelhoDataPoints = concelhoData.map((data) => {
@@ -30,7 +31,7 @@ const makeVegaJSONFor = (concelhoData) => {
   return vegaTemplate;
 };
 
-const showChartFor = (concelho, store) => {
+const showChartFor = (concelho, store, cb) => {
   FetchService.getSah({ concelho }, (concelhoData) => {
     const chartData = makeVegaJSONFor(concelhoData);
     store.setState({
@@ -38,6 +39,7 @@ const showChartFor = (concelho, store) => {
       concelho: concelho,
       data: chartData,
     });
+    cb();
   });
 };
 

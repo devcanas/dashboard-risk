@@ -1,6 +1,6 @@
 <script>
-  import { onMount } from "svelte";
-  import { sahChart } from "../../stores";
+  import { loading, sahChart } from "../../stores";
+  import LoadingSpinner from "../LoadingSpinner.svelte";
   import Wrapper from "./Wrapper.svelte";
 
   var view;
@@ -14,7 +14,6 @@
   }
 
   sahChart.subscribe((chartData) => {
-    console.log(chartData);
     chartData.data && render(chartData.data);
   });
 </script>
@@ -71,6 +70,7 @@
 {#if $sahChart.edited}
   <Wrapper bottomLeft>
     <div class="chart-wrapper">
+      <LoadingSpinner isLoading={$loading.isConcelhoChartLoading} />
       <div class="close-btn" on:click={sahChart.reset}>
         <img
           width="20"

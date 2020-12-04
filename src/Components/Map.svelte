@@ -105,7 +105,12 @@
   const configureEventListenersForMap = () => {
     map.on("click", (e) => {
       const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
-      showChartFor(geoProps.concelho, sahChart);
+      if (geoProps) {
+        loading.setState({ ...$loading, isConcelhoChartLoading: true });
+        showChartFor(geoProps.concelho, sahChart, () => {
+          loading.setState({ ...$loading, isConcelhoChartLoading: false });
+        });
+      }
     });
   };
 
@@ -124,7 +129,7 @@
   };
 
   onMount(() => {
-    loading.setState(true);
+    loading.setState({ ...$loading, isLayerLoading: true });
     map = createMap(defaultLocation);
     FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
     FetchService.getRiskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
@@ -148,5 +153,5 @@
 <div class="map-wrapper">
   <div id="covid-risk-map" />
   <Overlays />
-  <LoadingSpinner />
+  <LoadingSpinner isLoading={$loading.isLayerLoading} />
 </div>
