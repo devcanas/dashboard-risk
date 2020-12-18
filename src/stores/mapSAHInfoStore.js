@@ -5,7 +5,7 @@ const { subscribe, set, update } = writable([]);
 const mapSAHInfoStore = (_) => ({
   subscribe,
   setState: (newState) => update((_) => newState),
-  reset: (_) => set(initialInfoState),
+  reset: (_) => set([]),
 });
 
 export default mapSAHInfoStore;

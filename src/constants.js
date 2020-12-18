@@ -47,7 +47,7 @@ export const Locations = [
   },
 ];
 
-const prod = false;
+const prod = true;
 const devServer = "http://covid-risk.com:5000";
 const prodServer = "http://covid.vps.tecnico.ulisboa.pt";
 const server = prod ? prodServer : devServer;

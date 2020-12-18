@@ -3,6 +3,7 @@
   import Info from "./overlays/Info.svelte";
   import { mapMode } from "../stores/index";
   import Chart from "./overlays/Chart.svelte";
+  import Timeline from "./overlays/Timeline.svelte";
 </script>
 
 <Chart />
@@ -11,3 +12,4 @@
   risk={$mapMode.isRiskMap}
   idq={$mapMode.isIDQMap}
   sah={$mapMode.isSAHMap} />
+<Timeline />

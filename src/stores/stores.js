@@ -6,6 +6,7 @@ import mapAvailableDatesStore from "./mapAvailableDatesStore";
 import locationStore from "./mapLocationStore";
 import riskPropertiesStore from "./riskPropertiesStore";
 import sahChartStore from "./sahChartStore";
+import playerStore from "./playerStore";
 
 export const createMapInfoStore = mapInfoStore;
 export const createMapModeStore = mapModeStore;
@@ -15,3 +16,4 @@ export const createAvailableDatesStore = mapAvailableDatesStore;
 export const createLocationStore = locationStore;
 export const createRiskPropertiesStore = riskPropertiesStore;
 export const createSahChartStore = sahChartStore;
+export const createPlayerStore = playerStore;

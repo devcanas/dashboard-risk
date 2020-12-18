@@ -29,7 +29,7 @@
   }
 
   .topLeft {
-    left: 40px;
+    left: 55px;
     top: 10px;
   }
 </style>
