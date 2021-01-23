@@ -4,11 +4,11 @@
   import Footer from "./Components/Footer.svelte";
   import { onMount } from "svelte";
   import { availableDates, sahInfo, riskProps, loading } from "./stores";
-  import FetchService from "./FetchService";
+  import FetchService from "./network/FetchService";
 
   availableDates.subscribe((newDates) => {
     const date = newDates.selectedDate;
-    if (date) FetchService.getSah({ date }, false, sahInfo.setState);
+    if (date) FetchService.getSahForDate(date, false, sahInfo.setState);
   });
 
   onMount((_) => {

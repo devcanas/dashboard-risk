@@ -19,7 +19,7 @@
     getProps,
   } from "./helpers/mapUtils";
   import { onMount } from "svelte";
-  import FetchService from "../FetchService";
+  import FetchService from "../network/FetchService";
   import { defaultLocation } from "../constants";
   import showChartFor from "./helpers/chartData";
 

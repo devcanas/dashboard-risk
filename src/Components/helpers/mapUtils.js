@@ -18,7 +18,7 @@ export const getConcelhoSahValue = (concelho, sahInfo, asString = false) => {
   return sahConcelho
     ? asString
       ? sahConcelho.percent + "%"
-      : sahConcelho.percent
+      : sahConcelho.percent / 100
     : "N/A";
 };
 

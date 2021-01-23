@@ -4,13 +4,21 @@ const prodConfig = (_) => ({
     url: "http://covid.vps.tecnico.ulisboa.pt/api",
     endpoints: endpoints,
   },
+  layer: {
+    concelho: "/data/concelhos-portugal_0_001.js",
+    riskIqd: "/build/riskIdq.js",
+  },
 });
 
 const devConfig = (_) => ({
   defaultMapLocationId: "continente",
   api: {
-    url: "http://localhost:9000",
+    url: "http://covid-risk.com:9000",
     endpoints: endpoints,
+  },
+  layer: {
+    concelho: "/data/concelhos-portugal_0_001.js",
+    riskIqd: "/build/riskIdq.js",
   },
 });
 
@@ -22,9 +30,12 @@ const endpoints = {
     },
     date_range: {
       placeholders: ["{date}"],
-      string: "/nos/date/{date}/range/15", // range should be configurable?
+      string: "/nos/date/{date}/range/15",
     },
-    concelho: "", // TODO
+    concelho: {
+      placeholders: ["{concelho}"],
+      string: "/nos/concelho/{concelho}/",
+    },
   },
   risk: {},
 };
