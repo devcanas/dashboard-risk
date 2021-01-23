@@ -4,7 +4,7 @@ const makeVegaJSONFor = (concelhoData) => {
   const concelhoDataPoints = concelhoData.map((data) => {
     return {
       x: data.date,
-      y: parseInt(data.sah * 100),
+      y: parseInt(data.percent),
       c: 0,
     };
   });

@@ -17,8 +17,8 @@ export const getConcelhoSahValue = (concelho, sahInfo, asString = false) => {
   )[0];
   return sahConcelho
     ? asString
-      ? parseInt(sahConcelho.sah * 100) + "%"
-      : sahConcelho.sah
+      ? sahConcelho.percent + "%"
+      : sahConcelho.percent
     : "N/A";
 };
 

@@ -11,5 +11,6 @@
 <ColorScale
   risk={$mapMode.isRiskMap}
   idq={$mapMode.isIDQMap}
-  sah={$mapMode.isSAHMap} />
+  sah={$mapMode.isSAHMap}
+/>
 <Timeline />

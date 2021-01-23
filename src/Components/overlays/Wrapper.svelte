@@ -5,6 +5,16 @@
   export let topLeft = false;
 </script>
 
+<div
+  class="map-overlay-wrapper"
+  class:bottomLeft
+  class:bottomRight
+  class:topRight
+  class:topLeft
+>
+  <slot />
+</div>
+
 <style>
   .map-overlay-wrapper {
     position: absolute;
@@ -33,12 +43,3 @@
     top: 10px;
   }
 </style>
-
-<div
-  class="map-overlay-wrapper"
-  class:bottomLeft
-  class:bottomRight
-  class:topRight
-  class:topLeft>
-  <slot />
-</div>

@@ -45,6 +45,43 @@
   };
 </script>
 
+{#if $availableDates.selectedDate !== null}
+  <Wrapper topRight>
+    <div class="info-wrapper">
+      <div class="date-picker-wrapper">
+        <DatePicker
+          on:dateSelected={(e) => {
+            const dateStr = shortFormat(e.detail.date);
+            if (dateStr === $availableDates.selectedDate) return;
+            return availableDates.selectDate(dateStr);
+          }}
+          bind:formattedSelected
+          start={new Date("2020-01-01")}
+          end={new Date()}
+          selected={new Date($availableDates.selectedDate)}
+          format={prettyFormat}
+        >
+          <button class="custom-button">{formattedSelected}</button>
+        </DatePicker>
+      </div>
+      {#if !$mapInfo.edited}
+        <span class="info-label">Passe por cima do mapa</span>
+      {:else}
+        <span class="info-label">Concelho: {$mapInfo.displayString}</span><br />
+        <span class="info-label"
+          >Risco:
+          {Math.round($mapInfo.Risk) || "-"}</span
+        ><br />
+        <span class="info-label"
+          >Incerteza:
+          {Math.round($mapInfo.IQD) || "-"}</span
+        ><br />
+        <span class="info-label">Fica em casa: {$mapInfo.sah}</span>
+      {/if}
+    </div>
+  </Wrapper>
+{/if}
+
 <style>
   .info-wrapper {
     width: 500px;
@@ -80,35 +117,3 @@
     transform: rotate(-90deg);
   }
 </style>
-
-{#if $availableDates.selectedDate !== null}
-  <Wrapper topRight>
-    <div class="info-wrapper">
-      <div class="date-picker-wrapper">
-        <DatePicker
-          on:dateSelected={(e) => {
-            const dateStr = shortFormat(e.detail.date);
-            if (dateStr === $availableDates.selectedDate) return;
-            return availableDates.selectDate(dateStr);
-          }}
-          bind:formattedSelected
-          start={new Date('2020-01-01')}
-          end={new Date()}
-          selected={new Date($availableDates.selectedDate)}
-          format={prettyFormat}>
-          <button class="custom-button">{formattedSelected}</button>
-        </DatePicker>
-      </div>
-      {#if !$mapInfo.edited}
-        <span class="info-label">Passe por cima do mapa</span>
-      {:else}
-        <span class="info-label">Concelho: {$mapInfo.displayString}</span><br />
-        <span class="info-label">Risco:
-          {Math.round($mapInfo.Risk) || '-'}</span><br />
-        <span class="info-label">Incerteza:
-          {Math.round($mapInfo.IQD) || '-'}</span><br />
-        <span class="info-label">Fica em casa: {$mapInfo.sah}</span>
-      {/if}
-    </div>
-  </Wrapper>
-{/if}

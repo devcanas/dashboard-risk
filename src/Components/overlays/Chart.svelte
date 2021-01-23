@@ -18,6 +18,37 @@
   });
 </script>
 
+{#if $sahChart.edited}
+  <Wrapper bottomLeft>
+    <div class="chart-wrapper">
+      <LoadingSpinner isLoading={$loading.isConcelhoChartLoading} />
+      <div class="close-btn" on:click={sahChart.reset}>
+        <img
+          width="20"
+          src="https://icons-for-free.com/iconfiles/png/512/x-1321215629555778185.png"
+          alt="close"
+        />
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div class="chart-concelho-data">
+            Evolução Stay@Home - Últimos 30 dias
+          </div>
+          <div class="chart-concelho-description">Concelho</div>
+          <div class="chart-concelho-name">{$sahChart.concelho}</div>
+        </div>
+        <div class="content-body">
+          {#if $sahChart.data}
+            <div id="concelho-chart" />
+          {:else}
+            <div id="no-data">Não existem dados para este concelho.</div>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </Wrapper>
+{/if}
+
 <style>
   .chart-wrapper {
     width: 100%;
@@ -66,33 +97,3 @@
     color: #555;
   }
 </style>
-
-{#if $sahChart.edited}
-  <Wrapper bottomLeft>
-    <div class="chart-wrapper">
-      <LoadingSpinner isLoading={$loading.isConcelhoChartLoading} />
-      <div class="close-btn" on:click={sahChart.reset}>
-        <img
-          width="20"
-          src="https://icons-for-free.com/iconfiles/png/512/x-1321215629555778185.png"
-          alt="close" />
-      </div>
-      <div class="content">
-        <div class="content-header">
-          <div class="chart-concelho-data">
-            Evolução Stay@Home - Últimos 30 dias
-          </div>
-          <div class="chart-concelho-description">Concelho</div>
-          <div class="chart-concelho-name">{$sahChart.concelho}</div>
-        </div>
-        <div class="content-body">
-          {#if $sahChart.data}
-            <div id="concelho-chart" />
-          {:else}
-            <div id="no-data">Não existem dados para este concelho.</div>
-          {/if}
-        </div>
-      </div>
-    </div>
-  </Wrapper>
-{/if}

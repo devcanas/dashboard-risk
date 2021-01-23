@@ -8,7 +8,7 @@
 
   availableDates.subscribe((newDates) => {
     const date = newDates.selectedDate;
-    if (date) FetchService.getSah({ date }, sahInfo.setState);
+    if (date) FetchService.getSah({ date }, false, sahInfo.setState);
   });
 
   onMount((_) => {
@@ -23,6 +23,17 @@
     });
   });
 </script>
+
+<div class="container">
+  <Header />
+  <div class="container__map">
+    <Map />
+  </div>
+  <Footer />
+  <a id="map-dl" style="display: none" href="move along" download
+    >... these are not the tags you are looking for</a
+  >
+</div>
 
 <style>
   .container {
@@ -41,13 +52,3 @@
     display: flex;
   }
 </style>
-
-<div class="container">
-  <Header />
-  <div class="container__map">
-    <Map />
-  </div>
-  <Footer />
-  <a id="map-dl" style="display: none" href="move along" download>... these are
-    not the tags you are looking for</a>
-</div>

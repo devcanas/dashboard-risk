@@ -29,6 +29,27 @@
   };
 </script>
 
+<div class="header">
+  <div class="info-controls-wrapper">
+    <h1>Dashboard Risco Covid-19</h1>
+    <Toggle
+      items={MapModes}
+      bind:selected={isSelectedMapMode}
+      bind:onClick={onClickMapMode}
+    />
+    <Toggle
+      items={Locations}
+      bind:selected={isSelectedLocation}
+      bind:onClick={onClickLocation}
+    />
+  </div>
+  <img
+    on:click={downloadMapAsPng}
+    src="images/download-button.png"
+    alt="download"
+  />
+</div>
+
 <style>
   @import url("https://fonts.googleapis.com/css2?family=XanhMono&display=swap");
   .header {
@@ -68,21 +89,3 @@
     box-shadow: 0 0 20px -1px #333;
   }
 </style>
-
-<div class="header">
-  <div class="info-controls-wrapper">
-    <h1>Dashboard Risco Covid-19</h1>
-    <Toggle
-      items={MapModes}
-      bind:selected={isSelectedMapMode}
-      bind:onClick={onClickMapMode} />
-    <Toggle
-      items={Locations}
-      bind:selected={isSelectedLocation}
-      bind:onClick={onClickLocation} />
-  </div>
-  <img
-    on:click={downloadMapAsPng}
-    src="images/download-button.png"
-    alt="download" />
-</div>

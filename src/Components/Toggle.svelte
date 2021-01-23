@@ -4,6 +4,15 @@
   export let onClick;
 </script>
 
+<div class="type-toggle">
+  {#each items as item (item.label)}
+    <span
+      on:click={(_) => onClick(item)}
+      class={selected(item) ? "selected" : ""}>{item.label}</span
+    >
+  {/each}
+</div>
+
 <style>
   .type-toggle {
     display: flex;
@@ -32,11 +41,3 @@
     box-shadow: 0 0 5px -1px #555;
   }
 </style>
-
-<div class="type-toggle">
-  {#each items as item (item.label)}
-    <span
-      on:click={(_) => onClick(item)}
-      class={selected(item) ? 'selected' : ''}>{item.label}</span>
-  {/each}
-</div>

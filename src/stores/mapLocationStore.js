@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
-import { Locations } from "../constants";
+import { defaultLocation } from "../constants";
 
-const initialState = Locations.filter((loc) => loc.default)[0];
+const initialState = defaultLocation;
 
 const { subscribe, set, update } = writable(initialState);
 

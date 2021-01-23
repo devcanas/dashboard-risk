@@ -5,6 +5,69 @@
   export let sah = false;
 </script>
 
+<Wrapper bottomRight>
+  <div class="color-scale">
+    <div class="color-scale-title">
+      {#if risk}
+        Risco<br />
+        <span class="color-scale-context">por 100.000 habitantes</span>
+      {:else if idq}
+        Incerteza<br />
+        <span class="color-scale-context">por 100.000 habitantes</span>
+      {:else if sah}Stay@Home{/if}
+    </div>
+    <div class="color-scale-figures">
+      {#if sah}
+        <div class="outer">
+          <div class="inner" style="background-color: #b8de29;" />
+          &gt; 70%
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #3cbb75;" />
+          60% - 70%
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #238a8d;" />
+          50% - 70%
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #39568c;" />
+          40% - 50%
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #481567;" />
+          &lt; 40%
+        </div>
+      {:else}
+        <div class="outer">
+          <div class="inner" style="background-color: #fde725;" />
+          1000+
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #b8de29;" />
+          800
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #3cbb75;" />
+          600
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #238a8d;" />
+          400
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #39568c;" />
+          200
+        </div>
+        <div class="outer">
+          <div class="inner" style="background-color: #481567;" />
+          0
+        </div>
+      {/if}
+    </div>
+  </div>
+</Wrapper>
+
 <style>
   .color-scale {
     min-width: 200px;
@@ -34,55 +97,3 @@
     margin-right: 20px;
   }
 </style>
-
-<Wrapper bottomRight>
-  <div class="color-scale">
-    <div class="color-scale-title">
-      {#if risk}
-        Risco<br />
-        <span class="color-scale-context">por 100.000 habitantes</span>
-      {:else if idq}
-        Incerteza<br />
-        <span class="color-scale-context">por 100.000 habitantes</span>
-      {:else if sah}Stay@Home{/if}
-    </div>
-    <div class="color-scale-figures">
-      {#if sah}
-        <div class="outer">
-          <div class="inner" style="background-color: #b8de29;" />&gt; 70%
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #3cbb75;" />60% - 70%
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #238a8d;" />50% - 70%
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #39568c;" />40% - 50%
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #481567;" />&lt; 40%
-        </div>
-      {:else}
-        <div class="outer">
-          <div class="inner" style="background-color: #fde725;" />1000+
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #b8de29;" />800
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #3cbb75;" />600
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #238a8d;" />400
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #39568c;" />200
-        </div>
-        <div class="outer">
-          <div class="inner" style="background-color: #481567;" />0
-        </div>
-      {/if}
-    </div>
-  </div>
-</Wrapper>

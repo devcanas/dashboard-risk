@@ -1,3 +1,5 @@
+import config from "./config";
+
 export const MapModes = [
   {
     default: true,
@@ -27,36 +29,35 @@ export const MapModes = [
 
 export const Locations = [
   {
-    default: true,
-    id: "cte",
+    id: "continente",
     label: "Continente",
     coords: [39.38950933, -7.77282714],
     zoom: 7,
   },
   {
-    id: "mad",
+    id: "madeira",
     label: "Madeira",
     coords: [32.76071688, -16.60034179],
     zoom: 10,
   },
   {
-    id: "ac",
+    id: "acores",
     label: "Açores",
     coords: [38.51378825, -27.90527343],
     zoom: 8,
   },
 ];
 
-const prod = true;
-const devServer = "http://covid-risk.com:5000";
+const prod = false;
+const devServer = "http://covid-risk.com:8000";
 const prodServer = "http://covid.vps.tecnico.ulisboa.pt";
 const server = prod ? prodServer : devServer;
 const availableDates = `${
-  prod ? server : "http://covid-risk.com:9000"
+  prod ? server : "http://covid-risk.com:8000"
 }/dates.php`;
-const sahDate = `${prod ? server : "http://covid-risk.com:9000"}/sah.php?date=`;
+const sahDate = `${prod ? server : "http://covid-risk.com:8000"}/sah.php?date=`;
 const sahConcelho = `${
-  prod ? server : "http://covid-risk.com:9000"
+  prod ? server : "http://covid-risk.com:8000"
 }/sah.php?concelho_name=`;
 const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
 const risk = `${prod ? server : ""}/build/riskIdq.js`;
@@ -71,4 +72,6 @@ export const Endpoints = {
   properties,
 };
 
-export const defaultLocation = Locations.filter((loc) => loc.default)[0];
+export const defaultLocation = Locations.filter((loc) => {
+  return loc.id === config.defaultMapLocationId;
+})[0];

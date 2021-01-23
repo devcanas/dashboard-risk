@@ -2,6 +2,10 @@
   export let isLoading;
 </script>
 
+<div class="loading-spinner-wrapper {isLoading ? 'visible' : ''}">
+  <img src="/images/spinner.png" alt="Loading spinner" />
+</div>
+
 <style>
   .loading-spinner-wrapper {
     position: absolute;
@@ -40,7 +44,3 @@
     display: flex;
   }
 </style>
-
-<div class="loading-spinner-wrapper {isLoading ? 'visible' : ''}">
-  <img src="/images/spinner.png" alt="Loading spinner" />
-</div>

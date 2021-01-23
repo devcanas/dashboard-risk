@@ -1,3 +1,4 @@
+import config from "./config";
 import { Endpoints } from "./constants";
 
 const get = async (endpoint, success, failure = (_) => {}) => {
@@ -11,13 +12,15 @@ const getAvailableDates = async (success, fail) => {
   return get(Endpoints.availableDates, success, console.log);
 };
 
-const getSah = async ({ date, concelho }, success, fail) => {
-  date && getSahForDate(date, success, fail);
+const getSah = async ({ date, concelho }, asRange, success, fail) => {
+  date && getSahForDate(date, asRange, success, fail);
   concelho && getSahForConcelho(concelho, success, fail);
 };
 
-const getSahForDate = async (date, success, fail) => {
-  return get(`${Endpoints.sahDate}${date}`, success, console.log);
+const getSahForDate = async (date, asRange, success, fail) => {
+  const nosConfig = config.api.endpoints.nos;
+  const configuration = asRange ? nosConfig.date_range : nosConfig.date;
+  return get(endpointFor(configuration, [date]), success, console.log);
 };
 
 const getSahForConcelho = async (concelho, success, fail) => {
@@ -41,6 +44,14 @@ export const getRiskIQDLayer = async (style, cb) =>
   getLayer(Endpoints.risk, style, cb);
 export const getConcelhosLayer = async (style, cb) =>
   getLayer(Endpoints.concelhos, style, cb);
+
+const endpointFor = (endpointConfig, params) => {
+  let endpoint = endpointConfig.string;
+  endpointConfig.placeholders.forEach((placeholder, index) => {
+    endpoint = endpoint.replace(placeholder, params[index]);
+  });
+  return `${config.api.url}${endpoint}`;
+};
 
 const FetchService = {
   getAvailableDates,

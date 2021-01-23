@@ -137,6 +137,12 @@
   });
 </script>
 
+<div class="map-wrapper">
+  <div id="covid-risk-map" />
+  <Overlays />
+  <LoadingSpinner isLoading={$loading.isLayerLoading} />
+</div>
+
 <style>
   .map-wrapper {
     position: relative;
@@ -149,9 +155,3 @@
     z-index: 0;
   }
 </style>
-
-<div class="map-wrapper">
-  <div id="covid-risk-map" />
-  <Overlays />
-  <LoadingSpinner isLoading={$loading.isLayerLoading} />
-</div>

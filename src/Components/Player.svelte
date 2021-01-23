@@ -75,6 +75,23 @@
   };
 </script>
 
+<svelte:window on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} />
+<div class="player">
+  <div id="timeline">
+    <div id="tooltip" />
+    <div id="scrub" on:mousedown={handleMouseDown} />
+  </div>
+  <div class="buttons-container">
+    <button on:click={isPlaying ? didPause : didPlay}
+      ><img
+        src={isPlaying ? "/images/pause.png" : "/images/play.png"}
+        height="20"
+        alt="play"
+      /></button
+    >
+  </div>
+</div>
+
 <style>
   .player {
     padding: 20px;
@@ -139,17 +156,3 @@
     border-radius: 5px;
   }
 </style>
-
-<svelte:window on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} />
-<div class="player">
-  <div id="timeline">
-    <div id="tooltip" />
-    <div id="scrub" on:mousedown={handleMouseDown} />
-  </div>
-  <div class="buttons-container">
-    <button on:click={isPlaying ? didPause : didPlay}><img
-        src={isPlaying ? '/images/pause.png' : '/images/play.png'}
-        height="20"
-        alt="play" /></button>
-  </div>
-</div>

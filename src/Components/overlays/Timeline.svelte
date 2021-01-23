@@ -36,9 +36,6 @@
   const didStopPlayout = (_) => {};
 </script>
 
-<style>
-</style>
-
 <Wrapper topLeft>
   <Player
     isPlaying={timeout !== null}
@@ -46,5 +43,9 @@
     selectItem={handleSelection}
     {didPlay}
     {didPause}
-    {didStopPlayout} />
+    {didStopPlayout}
+  />
 </Wrapper>
+
+<style>
+</style>
