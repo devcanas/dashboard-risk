@@ -1,5 +1,4 @@
-import config from "../configg";
-import { Endpoints } from "../constantss";
+import { Endpoints } from "../constants";
 import {
   endpointForConcelhosLayer,
   endpointForRiskLayer,
@@ -8,6 +7,7 @@ import {
   endpointForSahByConcelho,
   endpointForSahByDate,
 } from "./endpoints/nos";
+import { endpointForPropertiesByDate } from "./endpoints/risk";
 
 // Helper functions
 
@@ -34,8 +34,8 @@ const getAvailableDates = async (success, fail) => {
   return get(Endpoints.availableDates, success, console.log);
 };
 
-const getProperties = async (success, fail) => {
-  return get(Endpoints.properties, success, console.log);
+const propertiesByDate = async (date, asRange, success, fail) => {
+  return get(endpointForPropertiesByDate(date, asRange), success, console.log);
 };
 
 const sahByDate = async (date, asRange, success, fail) => {
@@ -48,20 +48,19 @@ const sahByConcelho = async (concelho, success, fail) => {
 
 // Layer requests
 
-export const riskIQDLayer = async (style, cb) =>
-  getLayer(endpointForConcelhosLayer(), style, cb);
+export const getRiskIQDLayer = async (style, cb) =>
+  getLayer(Endpoints.risk, style, cb);
 
-export const concelhosLayer = async (style, cb) =>
-  getLayer(endpointForRiskLayer(), style, cb);
+export const getConcelhosLayer = async (style, cb) =>
+  getLayer(Endpoints.concelhos, style, cb);
 
 // Exports
 
 const FetchService = {
   getAvailableDates,
-  getProperties,
-
-  riskIQDLayer,
-  concelhosLayer,
+  getRiskIQDLayer,
+  getConcelhosLayer,
+  propertiesByDate,
   sahByDate,
   sahByConcelho,
 };

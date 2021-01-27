@@ -6,17 +6,19 @@
   import { availableDates, sahInfo, riskProps, loading } from "./stores";
   import FetchService from "./network/FetchService";
 
-  availableDates.subscribe((newDates) => {
-    const date = newDates.selectedDate;
-    if (date) FetchService.getSahForDate(date, false, sahInfo.setState);
+  availableDates.subscribe(({ selectedDate }) => {
+    if (selectedDate) {
+      FetchService.sahByDate(selectedDate, false, sahInfo.setState);
+
+      FetchService.propertiesByDate(selectedDate, false, (props) => {
+        riskProps.setState(props);
+        loading.setState({ ...$loading, isLayerLoading: false });
+      });
+    }
   });
 
   onMount((_) => {
-    FetchService.getProperties((props) => {
-      riskProps.setState(props);
-      loading.setState({ ...$loading, isLayerLoading: false });
-    });
-
+    loading.setState({ ...$loading, isLayerLoading: true });
     FetchService.getAvailableDates((dates) => {
       availableDates.setState(dates);
       availableDates.selectDate(dates[dates.length - 1]);

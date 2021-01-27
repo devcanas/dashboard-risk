@@ -30,21 +30,30 @@
 
   const setLayerStyles = () => {
     layerConcelhos && layerConcelhos.setStyle(concelhosStyle);
-    layerRisk && layerRisk.setStyle(riskIqdStyle);
+    layerRisk &&
+      Object.keys($riskProps).length > 0 &&
+      layerRisk.setStyle(riskIqdStyle);
   };
 
-  [sahInfo, mapMode, riskProps].forEach((store) => {
-    store.subscribe((_) => {
-      setLayerStyles();
-    });
+  sahInfo.subscribe((_) => {
+    setLayerStyles();
+  });
+
+  riskProps.subscribe((props) => {
+    $availableDates.selectedDate && setLayerStyles();
+  });
+
+  mapMode.subscribe((_) => {
+    setLayerStyles();
   });
 
   mapLocation.subscribe(({ coords, zoom }) => {
     map && map.flyTo(coords, zoom, { duration: 1 });
   });
 
-  const propsFor = (layer) =>
-    getProps($riskProps, layer, $availableDates.selectedDate);
+  const propsFor = (layer) => {
+    return getProps($riskProps, layer, $availableDates.selectedDate);
+  };
 
   const riskIqdStyle = (feature) => {
     return style.riskIqd.getStyle(propsFor(feature), $mapMode);

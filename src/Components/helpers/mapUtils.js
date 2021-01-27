@@ -23,7 +23,8 @@ export const getConcelhoSahValue = (concelho, sahInfo, asString = false) => {
 };
 
 export const getProps = (store, layer, date) => {
-  return store[layer.properties.data]
+  const val = store[layer.properties.data]
     ? store[layer.properties.data].filter((data) => data.date === date)[0]
     : undefined;
+  return val;
 };

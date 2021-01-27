@@ -60,7 +60,7 @@ const sahConcelho = `${
   prod ? server : "http://covid-risk.com:8000"
 }/sah.php?concelho_name=`;
 const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
-const risk = `${prod ? server : ""}/build/riskIdq.js`;
+const risk = `${prod ? server : ""}/build/riskIdq_test.js`;
 const properties = `${prod ? server : ""}/build/properties.js`;
 
 export const Endpoints = {

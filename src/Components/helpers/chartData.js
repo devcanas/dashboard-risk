@@ -1,4 +1,4 @@
-import FetchService from "../../network/FetchServicehService";
+import FetchService from "../../network/FetchService";
 
 const makeVegaJSONFor = (concelhoData) => {
   const concelhoDataPoints = concelhoData.map((data) => {

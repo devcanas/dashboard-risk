@@ -1,40 +1,39 @@
 # Dashboard Risco Covid-19
 
+## Overview
+
+O dashboard neste momento é composto por 2 componentes, o dashboard em si e a API que alimenta o dashboard.
+
+Existem dois indicadores consumidos pelo dashboard:
+
+- risco / incerteza
+- stay @ home
+
+Para o primeiro indicador, são colocados na pasta 'data' na raíz do servidor ficheiros geojson para cada dia.
+Estes dados são consumidos pelo script **geojson_merge** que junta todos os dados numa BD.
+
+Os dados de _stay@home_ são colocados numa BD também.
+
+---
+
+### **geojson merge**
+
+O output deste script é o ficheiro riskIqd.js que é um geojson e guarda um uuid para cada feature que é usado como referencia para se ir buscar mais tarde as propriedades organizadas por dia na BD.
+
+---
+
 ## Correr a app
-
-Começar um servidor php na pasta public com
-
-- `php -S localhost:9000`
-
-E de seguida:
 
 - `npm install`
 - `npm run dev`
 
+Nota: o servidor da API deve estar a correr, de outro modo os pedidos vão falhar
+
 ## Deploy para servidor
-
-Antes de fazer o deploy é preciso ir a pasta de constantes em src/constants.js e mudar a flag `prod` para true para mudar os endpoints que a app espera receber.
-
-De seguida:
 
 `npm run build`
 
-Fazendo scp do public/build, public/index.html e, caso haja alterações, dos ficheiros PHP.
-
-(Não fazer scp da pasta data porque não é atualizada)
-
-## geojson merge
-
-O output deste script (ainda não está no git) são dois ficheiros:
-
-- properties.js
-- riskIqd.js
-
-O primeiro ficheiro tem as propriedades para o risco e incerteza nas diferentes datas e o segundo tem o geojson com os poligonos e referencias para as propriedades.
-
-## xlsx-to-json
-
-Este script serve para converter o xlsx dos dados da NOS para JSON.
+Este comando cria uma pasta 'public' cujo conteudo deve ser colocado na root do servidor
 
 ## scripts auxiliares
 
