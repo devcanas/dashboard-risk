@@ -14,16 +14,17 @@ const prodConfig = (_) => ({
 const devConfig = (_) => ({
   defaultMapLocationId: "continente",
   api: {
-    url: "http://covid-risk.com:9000",
+    url: "http://localhost:9000",
     endpoints: endpoints,
   },
   layer: {
-    concelho: "/data/concelhos-portugal_0_001.js",
-    riskIqd: "/build/riskIdq.js",
+    concelho: `${window.location.href}data/concelhos-portugal_0_001.js`,
+    riskIqd: `${window.location.href}build/riskIdq_test.js`,
   },
 });
 
 const endpoints = {
+  init: "/init",
   nos: {
     date: {
       placeholders: ["{date}"],
