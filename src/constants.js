@@ -48,30 +48,6 @@ export const Locations = [
   },
 ];
 
-const prod = false;
-const devServer = "http://covid-risk.com:8000";
-const prodServer = "http://covid.vps.tecnico.ulisboa.pt";
-const server = prod ? prodServer : devServer;
-const availableDates = `${
-  prod ? server : "http://covid-risk.com:8000"
-}/dates.php`;
-const sahDate = `${prod ? server : "http://covid-risk.com:8000"}/sah.php?date=`;
-const sahConcelho = `${
-  prod ? server : "http://covid-risk.com:8000"
-}/sah.php?concelho_name=`;
-const concelhos = `${prod ? server : ""}/data/concelhos-portugal_0_001.js`;
-const risk = `${prod ? server : ""}/build/riskIdq_test.js`;
-const properties = `${prod ? server : ""}/build/properties.js`;
-
-export const Endpoints = {
-  availableDates,
-  sahDate,
-  sahConcelho,
-  concelhos,
-  risk,
-  properties,
-};
-
 export const defaultLocation = Locations.filter((loc) => {
   return loc.id === config.defaultMapLocationId;
 })[0];

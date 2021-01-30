@@ -40,7 +40,13 @@
   });
 
   riskProps.subscribe((props) => {
-    $availableDates.selectedDate && setLayerStyles();
+    console.log(props.shouldUpdate);
+    console.log($availableDates.selectedDate);
+    if ($availableDates.selectedDate && props.shouldUpdate) {
+      console.log("mkay");
+      setLayerStyles();
+      riskProps.setShouldUpdate(false);
+    }
   });
 
   mapMode.subscribe((_) => {
@@ -140,8 +146,8 @@
   onMount(() => {
     loading.setState({ ...$loading, isLayerLoading: true });
     map = createMap(defaultLocation);
-    FetchService.getConcelhosLayer(concelhosStyle, setupConcelhosLayer);
-    FetchService.getRiskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
+    FetchService.concelhosLayer(concelhosStyle, setupConcelhosLayer);
+    FetchService.riskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
     configureEventListenersForMap();
   });
 </script>
