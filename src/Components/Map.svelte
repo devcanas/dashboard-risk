@@ -35,17 +35,17 @@
       layerRisk.setStyle(riskIqdStyle);
   };
 
+  availableDates.subscribe(() => {
+    setLayerStyles();
+  });
+
   sahInfo.subscribe((_) => {
     setLayerStyles();
   });
 
-  riskProps.subscribe((props) => {
-    console.log(props.shouldUpdate);
-    console.log($availableDates.selectedDate);
-    if ($availableDates.selectedDate && props.shouldUpdate) {
-      console.log("mkay");
+  riskProps.subscribe((_) => {
+    if ($availableDates.selectedDate) {
       setLayerStyles();
-      riskProps.setShouldUpdate(false);
     }
   });
 

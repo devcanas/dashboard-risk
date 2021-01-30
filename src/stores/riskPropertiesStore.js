@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 
 const initialState = {
-  shouldUpdate: true,
+  initialRender: true,
 };
 
 const { subscribe, set, update } = writable(initialState);
@@ -9,9 +9,9 @@ const { subscribe, set, update } = writable(initialState);
 const riskPropertiesStore = (_) => ({
   subscribe,
   setState: (newState) =>
-    update(({ shouldUpdate }) => ({ ...newState, shouldUpdate })),
-  setShouldUpdate: (shouldUpdate) =>
-    update((state) => ({ ...state, shouldUpdate })),
+    update(({ initialRender }) => ({ ...newState, initialRender })),
+  initialRender: (initialRender) =>
+    update((state) => ({ ...state, initialRender })),
   reset: (_) => set(initialState),
 });
 
