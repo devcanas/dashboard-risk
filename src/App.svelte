@@ -5,9 +5,10 @@
   import { onMount } from "svelte";
   import { availableDates, sahInfo, riskProps, loading } from "./stores";
   import FetchService from "./network/FetchService";
+  import moment from "moment";
 
   const fetchMissingProps = (selectedDate) => {
-    smartFetch(selectedDate);
+    rangeFetch(selectedDate);
     FetchService.sahByDate(selectedDate, false, sahInfo.setState);
 
     FetchService.propertiesByDate(selectedDate, false, (props) => {
@@ -16,7 +17,7 @@
     });
   };
 
-  const smartFetch = (selectedDate) => {
+  const rangeFetch = (selectedDate) => {
     FetchService.sahByDate(selectedDate, true, sahInfo.setState);
 
     FetchService.propertiesByDate(selectedDate, true, (props) => {
@@ -25,26 +26,37 @@
   };
 
   const cacheMiss = (selectedDate) => {
+    // key represents geojson feature so it is
+    // not really important which one to pick since
+    // if a date is cached it exists in every feature
     const randomKey = Object.keys($riskProps)[2];
-    return (
-      selectedDate &&
-      (!randomKey ||
-        (randomKey &&
-          !$riskProps[randomKey].filter(
-            (data) => data.date === selectedDate
-          )[0]))
-    );
+    if (!randomKey) return true;
+    const filterP = (data) => data.date === selectedDate;
+    return $riskProps[randomKey].filter(filterP).length === 0;
+  };
+
+  const dayBefore = (selectedDate) => {
+    return moment(selectedDate).subtract(1, "days").format("YYYY-MM-DD");
+  };
+
+  const dayAfter = (selectedDate) => {
+    return moment(selectedDate).add(1, "days").format("YYYY-MM-DD");
   };
 
   availableDates.subscribe(({ selectedDate }) => {
+    if (!selectedDate) return;
+
     if (cacheMiss(selectedDate)) {
       loading.setState({ ...$loading, isLayerLoading: true });
       fetchMissingProps(selectedDate);
       return;
     }
 
-    if (selectedDate) {
-      smartFetch(selectedDate);
+    if (
+      selectedDate &&
+      (cacheMiss(dayBefore(selectedDate)) || cacheMiss(dayAfter(selectedDate)))
+    ) {
+      rangeFetch(selectedDate);
       return;
     }
   });
