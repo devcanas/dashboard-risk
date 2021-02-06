@@ -1,4 +1,5 @@
 import { Endpoints } from "../constants";
+import { endpointForInit } from "./endpoints/init";
 import {
   endpointForConcelhosLayer,
   endpointForRiskLayer,
@@ -30,8 +31,8 @@ const getLayer = async (endpoint, style, cb) => {
 
 // API requests
 
-const getAvailableDates = async (success, fail) => {
-  return get(Endpoints.availableDates, success, console.log);
+const availableDates = async (success, fail) => {
+  return get(endpointForInit(), success, console.log);
 };
 
 const propertiesByDate = async (date, asRange, success, fail) => {
@@ -48,18 +49,18 @@ const sahByConcelho = async (concelho, success, fail) => {
 
 // Layer requests
 
-export const getRiskIQDLayer = async (style, cb) =>
-  getLayer(Endpoints.risk, style, cb);
+export const riskIQDLayer = async (style, cb) =>
+  getLayer(endpointForRiskLayer(), style, cb);
 
-export const getConcelhosLayer = async (style, cb) =>
-  getLayer(Endpoints.concelhos, style, cb);
+export const concelhosLayer = async (style, cb) =>
+  getLayer(endpointForConcelhosLayer(), style, cb);
 
 // Exports
 
 const FetchService = {
-  getAvailableDates,
-  getRiskIQDLayer,
-  getConcelhosLayer,
+  availableDates,
+  riskIQDLayer,
+  concelhosLayer,
   propertiesByDate,
   sahByDate,
   sahByConcelho,

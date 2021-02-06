@@ -6,22 +6,53 @@
   import { availableDates, sahInfo, riskProps, loading } from "./stores";
   import FetchService from "./network/FetchService";
 
-  availableDates.subscribe(({ selectedDate }) => {
-    if (selectedDate) {
-      FetchService.sahByDate(selectedDate, false, sahInfo.setState);
+  const fetchMissingProps = (selectedDate) => {
+    smartFetch(selectedDate);
+    FetchService.sahByDate(selectedDate, false, sahInfo.setState);
 
-      FetchService.propertiesByDate(selectedDate, false, (props) => {
-        riskProps.setState(props);
-        loading.setState({ ...$loading, isLayerLoading: false });
-      });
+    FetchService.propertiesByDate(selectedDate, false, (props) => {
+      riskProps.setState({ ...props, initialRender: true });
+      loading.setState({ ...$loading, isLayerLoading: false });
+    });
+  };
+
+  const smartFetch = (selectedDate) => {
+    FetchService.sahByDate(selectedDate, true, sahInfo.setState);
+
+    FetchService.propertiesByDate(selectedDate, true, (props) => {
+      riskProps.setState({ ...props });
+    });
+  };
+
+  const cacheMiss = (selectedDate) => {
+    const randomKey = Object.keys($riskProps)[2];
+    return (
+      selectedDate &&
+      (!randomKey ||
+        (randomKey &&
+          !$riskProps[randomKey].filter(
+            (data) => data.date === selectedDate
+          )[0]))
+    );
+  };
+
+  availableDates.subscribe(({ selectedDate }) => {
+    if (cacheMiss(selectedDate)) {
+      loading.setState({ ...$loading, isLayerLoading: true });
+      fetchMissingProps(selectedDate);
+      return;
+    }
+
+    if (selectedDate) {
+      smartFetch(selectedDate);
+      return;
     }
   });
 
   onMount((_) => {
     loading.setState({ ...$loading, isLayerLoading: true });
-    FetchService.getAvailableDates((dates) => {
+    FetchService.availableDates((dates) => {
       availableDates.setState(dates);
-      availableDates.selectDate(dates[dates.length - 1]);
     });
   });
 </script>

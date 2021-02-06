@@ -9,7 +9,7 @@ const { subscribe, set, update } = writable(initialState);
 
 const availableDatesStore = (_) => ({
   subscribe,
-  setState: (dates) => update((state) => ({ ...state, dates })),
+  setState: (dates) => update((state) => ({ ...dates })),
   selectDate: (selectedDate) => update((state) => ({ ...state, selectedDate })),
   reset: () => set(initialState),
 });
