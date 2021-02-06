@@ -7,12 +7,12 @@
   import FetchService from "./network/FetchService";
 
   const fetchMissingProps = (selectedDate) => {
+    smartFetch(selectedDate);
     FetchService.sahByDate(selectedDate, false, sahInfo.setState);
 
     FetchService.propertiesByDate(selectedDate, false, (props) => {
       riskProps.setState({ ...props, initialRender: true });
       loading.setState({ ...$loading, isLayerLoading: false });
-      smartFetch(selectedDate);
     });
   };
 

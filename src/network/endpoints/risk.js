@@ -3,7 +3,7 @@ import config from "../../config";
 export const endpointForPropertiesByDate = (date, asRange) => {
   const riskIqdConfig = config.api.endpoints.risk;
   const configuration = asRange ? riskIqdConfig.date_range : riskIqdConfig.date;
-  return endpointFor(configuration, [date]);
+  return endpointFor(configuration, [date, config.dateRange]);
 };
 
 const endpointFor = (endpointConfig, params) => {

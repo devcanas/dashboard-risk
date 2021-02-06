@@ -6,7 +6,7 @@ import config from "../../config";
 export const endpointForSahByDate = (date, asRange) => {
   const nosConfig = config.api.endpoints.nos;
   const configuration = asRange ? nosConfig.date_range : nosConfig.date;
-  return endpointFor(configuration, [date]);
+  return endpointFor(configuration, [date, config.dateRange]);
 };
 
 // stay@home values for the last 30 days of records for a specific concelho
