@@ -39,14 +39,8 @@
     setLayerStyles();
   });
 
-  sahInfo.subscribe((_) => {
+  loading.subscribe(() => {
     setLayerStyles();
-  });
-
-  riskProps.subscribe((_) => {
-    if ($availableDates.selectedDate) {
-      setLayerStyles();
-    }
   });
 
   mapMode.subscribe((_) => {
@@ -68,11 +62,19 @@
   const concelhosStyle = (feature) =>
     style.concelhos.getStyle(
       $mapMode,
-      getConcelhoSahValue(feature.properties.NAME_2, $sahInfo)
+      getConcelhoSahValue(
+        feature.properties.NAME_2,
+        $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+      )
     );
 
   const geoProps = (e) =>
-    layerConcelhos && getGeoProps(e.latlng, layerConcelhos, $sahInfo);
+    layerConcelhos &&
+    getGeoProps(
+      e.latlng,
+      layerConcelhos,
+      $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+    );
 
   const updateRiskInfo = (e) => {
     const riskInfo = propsFor(e.layer.feature);
@@ -110,7 +112,10 @@
       e.layer.setStyle({
         fillColor: style.concelhos.getColor(
           $mapMode,
-          getConcelhoSahValue(e.layer.feature.properties.NAME_2, $sahInfo)
+          getConcelhoSahValue(
+            e.layer.feature.properties.NAME_2,
+            $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+          )
         ),
       });
       mapInfo.reset();
@@ -119,7 +124,11 @@
 
   const configureEventListenersForMap = () => {
     map.on("click", (e) => {
-      const geoProps = getGeoProps(e.latlng, layerConcelhos, $sahInfo);
+      const geoProps = getGeoProps(
+        e.latlng,
+        layerConcelhos,
+        $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+      );
       if (geoProps) {
         loading.setState({ ...$loading, isConcelhoChartLoading: true });
         showChartFor(geoProps.concelho, sahChart, () => {
