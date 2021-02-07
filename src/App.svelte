@@ -16,29 +16,20 @@
 
   const fetchMissingProps = (selectedDate) => {
     rangeFetch(selectedDate);
-    if ($mapMode.isSAHMap) {
-      console.log("fetchcing sah date");
-      FetchService.sahByDate(selectedDate, false, (state) => {
-        sahInfo.setState(state);
-        loading.setState({ ...$loading, isLayerLoading: false });
-      });
-    } else {
-      FetchService.propertiesByDate(selectedDate, false, (props) => {
-        riskProps.setState({ ...props, initialRender: true });
-        loading.setState({ ...$loading, isLayerLoading: false });
-      });
-    }
+    FetchService.sahByDate(selectedDate, false, (state) => {
+      sahInfo.setState(state);
+    });
+    FetchService.propertiesByDate(selectedDate, false, (props) => {
+      riskProps.setState({ ...props, initialRender: true });
+      loading.setState({ ...$loading, isLayerLoading: false });
+    });
   };
 
   const rangeFetch = (selectedDate) => {
-    if ($mapMode.isSAHMap) {
-      console.log("fetching range");
-      FetchService.sahByDate(selectedDate, true, sahInfo.setState);
-    } else {
-      FetchService.propertiesByDate(selectedDate, true, (props) => {
-        riskProps.setState({ ...props });
-      });
-    }
+    FetchService.sahByDate(selectedDate, true, sahInfo.setState);
+    FetchService.propertiesByDate(selectedDate, true, (props) => {
+      riskProps.setState({ ...props });
+    });
   };
 
   const cacheMissPadding = (date) => {
