@@ -31,7 +31,7 @@ const makeVegaJSONFor = (concelhoData) => {
 };
 
 const showChartFor = (concelho, store, cb) => {
-  FetchService.getSahForConcelho(concelho, (concelhoData) => {
+  FetchService.sahByConcelho(concelho, (concelhoData) => {
     const chartData = makeVegaJSONFor(concelhoData);
     store.setState({
       edited: true,

@@ -3,50 +3,94 @@
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
   import { onMount } from "svelte";
-  import { availableDates, sahInfo, riskProps, loading } from "./stores";
+  import {
+    availableDates,
+    sahInfo,
+    riskProps,
+    loading,
+    mapMode,
+  } from "./stores";
   import FetchService from "./network/FetchService";
+  import moment from "moment";
+  import config from "./config";
 
   const fetchMissingProps = (selectedDate) => {
-    smartFetch(selectedDate);
-    FetchService.sahByDate(selectedDate, false, sahInfo.setState);
-
+    rangeFetch(selectedDate);
+    FetchService.sahByDate(selectedDate, false, (state) => {
+      sahInfo.setState(state);
+    });
     FetchService.propertiesByDate(selectedDate, false, (props) => {
       riskProps.setState({ ...props, initialRender: true });
       loading.setState({ ...$loading, isLayerLoading: false });
     });
   };
 
-  const smartFetch = (selectedDate) => {
+  const rangeFetch = (selectedDate) => {
     FetchService.sahByDate(selectedDate, true, sahInfo.setState);
-
     FetchService.propertiesByDate(selectedDate, true, (props) => {
       riskProps.setState({ ...props });
     });
   };
 
-  const cacheMiss = (selectedDate) => {
-    const randomKey = Object.keys($riskProps)[2];
-    return (
-      selectedDate &&
-      (!randomKey ||
-        (randomKey &&
-          !$riskProps[randomKey].filter(
-            (data) => data.date === selectedDate
-          )[0]))
-    );
+  const cacheMissPadding = (date) => {
+    return cacheMiss(daysBefore(date)) || cacheMiss(daysAfter(date));
   };
 
-  availableDates.subscribe(({ selectedDate }) => {
+  const cacheMiss = (date) => {
+    if ($mapMode.isSAHMap) {
+      return cacheMissSah(date);
+    } else {
+      return cacheMissRisk(date);
+    }
+  };
+
+  const cacheMissRisk = (date) => {
+    // key represents geojson feature so it is
+    // not really important which one to pick since
+    // if a date is cached it exists in every feature
+    const randomKey = Object.keys($riskProps)[2];
+    if (!randomKey) return true;
+    const filterP = (data) => data.date === date;
+    return $riskProps[randomKey].filter(filterP).length === 0;
+  };
+
+  const cacheMissSah = (date) => {
+    return $sahInfo.filter((it) => it.date === date).length === 0;
+  };
+
+  const daysBefore = (selectedDate) => {
+    return moment(selectedDate)
+      .subtract(config.rangeFetchPadding, "days")
+      .format("YYYY-MM-DD");
+  };
+
+  const daysAfter = (selectedDate) => {
+    return moment(selectedDate)
+      .add(config.rangeFetchPadding, "days")
+      .format("YYYY-MM-DD");
+  };
+
+  const loadPropsIfNeeded = (selectedDate) => {
+    if (!selectedDate) return;
+
     if (cacheMiss(selectedDate)) {
       loading.setState({ ...$loading, isLayerLoading: true });
       fetchMissingProps(selectedDate);
       return;
     }
 
-    if (selectedDate) {
-      smartFetch(selectedDate);
+    if (cacheMissPadding(selectedDate)) {
+      rangeFetch(selectedDate);
       return;
     }
+  };
+
+  availableDates.subscribe(({ selectedDate }) => {
+    loadPropsIfNeeded(selectedDate);
+  });
+
+  mapMode.subscribe(() => {
+    loadPropsIfNeeded($availableDates.selectedDate);
   });
 
   onMount((_) => {
