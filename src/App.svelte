@@ -9,26 +9,38 @@
     riskProps,
     loading,
     mapMode,
+    player,
   } from "./stores";
   import FetchService from "./network/FetchService";
   import moment from "moment";
   import config from "./config";
 
-  const fetchMissingProps = (selectedDate) => {
-    rangeFetch(selectedDate);
+  const fetchMissingProps = (
+    selectedDate,
+    rangeFetch = null,
+    completion = null
+  ) => {
+    rangeFetch && rangeFetch(selectedDate);
     FetchService.sahByDate(selectedDate, false, (state) => {
       sahInfo.setState(state);
     });
     FetchService.propertiesByDate(selectedDate, false, (props) => {
       riskProps.setState({ ...props, initialRender: true });
-      loading.setState({ ...$loading, isLayerLoading: false });
+      completion && completion();
     });
   };
 
-  const rangeFetch = (selectedDate) => {
+  const rangeFetch = (
+    selectedDate,
+    overrideData = true,
+    completion = (_) => {}
+  ) => {
     FetchService.sahByDate(selectedDate, true, sahInfo.setState);
     FetchService.propertiesByDate(selectedDate, true, (props) => {
-      riskProps.setState({ ...props });
+      let newState = overrideData ? {} : { ...$riskProps };
+      riskProps.setState({ ...newState, ...props });
+      loading.setState({ ...$loading, isLayerLoading: false });
+      completion();
     });
   };
 
@@ -61,21 +73,36 @@
   const daysBefore = (selectedDate) => {
     return moment(selectedDate)
       .subtract(config.rangeFetchPadding, "days")
-      .format("YYYY-MM-DD");
+      .format(config.dateFormat);
   };
 
   const daysAfter = (selectedDate) => {
     return moment(selectedDate)
       .add(config.rangeFetchPadding, "days")
-      .format("YYYY-MM-DD");
+      .format(config.dateFormat);
+  };
+
+  const handlePlayerRequestsIfNeeded = (selectedDate) => {
+    if (cacheMiss(daysAfter(selectedDate)) && !$player.isFetching) {
+      let targetDate = moment(selectedDate)
+        .add(config.rangeFetchPadding + config.dateRange, "days")
+        .format(config.dateFormat);
+
+      player.setState({ ...$player, isFetching: true });
+      rangeFetch(targetDate, false, () => {
+        player.setState({ ...$player, isFetching: false });
+      });
+    }
   };
 
   const loadPropsIfNeeded = (selectedDate) => {
-    if (!selectedDate) return;
+    $player.isPlaying && handlePlayerRequestsIfNeeded(selectedDate);
+
+    if (!selectedDate || $player.isPlaying) return;
 
     if (cacheMiss(selectedDate)) {
       loading.setState({ ...$loading, isLayerLoading: true });
-      fetchMissingProps(selectedDate);
+      fetchMissingProps(selectedDate, rangeFetch);
       return;
     }
 

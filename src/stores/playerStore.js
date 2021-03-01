@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 
 const initialState = {
   isScrubbing: false,
+  isPlaying: false,
   currentPosition: 0,
 };
 

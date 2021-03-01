@@ -1,4 +1,4 @@
-var colors = [
+const colors = [
   "#481567",
   "#453781",
   "#39568c",
@@ -11,7 +11,20 @@ var colors = [
   "#fde725",
 ];
 
-function getColor(d) {
+const predColors = [
+  "rgba(255,255,255)",
+  "rgba(247,251,255)",
+  "rgba(222,235,247)",
+  "rgba(198,219,239)",
+  "rgba(158,202,225)",
+  "rgba(107,174,214)",
+  "rgba(66,146,198)",
+  "rgba(33,113,181)",
+  "rgba(8,81,156)",
+  "rgba(8,48,107)",
+];
+
+const regularColor = (d) => {
   return d < 100
     ? colors[0]
     : d < 200
@@ -31,6 +44,32 @@ function getColor(d) {
     : d < 900
     ? colors[8]
     : colors[9];
+};
+
+const predColor = (d) => {
+  return d < 100
+    ? predColors[0]
+    : d < 200
+    ? predColors[1]
+    : d < 300
+    ? predColors[2]
+    : d < 400
+    ? predColors[3]
+    : d < 500
+    ? predColors[4]
+    : d < 600
+    ? predColors[5]
+    : d < 700
+    ? predColors[6]
+    : d < 800
+    ? predColors[7]
+    : d < 900
+    ? predColors[8]
+    : predColors[9];
+};
+
+function getColor(d, isPred) {
+  return !isPred ? regularColor(d) : predColor(d);
 }
 
 function getCColor(d) {
@@ -54,7 +93,9 @@ export const riskIqdStyle = (properties, mode) => ({
 
 export const colorForRiskIqd = (properties, mode) => {
   if (!properties || mode.id === "sahMap") return "rgba(0,0,0,0)";
-  return mode.isRiskMap ? getColor(properties.Risk) : getColor(properties.IQD);
+  return mode.isRiskMap
+    ? getColor(properties.Risk, properties.isPred)
+    : getColor(properties.IQD, properties.isPred);
 };
 
 export const concelhosStyle = (mode, value) => ({

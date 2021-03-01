@@ -3,6 +3,7 @@ const prodConfig = (_) => ({
   dateRange: 15,
   // if selectedDate +- rangeFetchPadding is a cach miss, fetch the dateRange for the selectedDate
   rangeFetchPadding: 3,
+  dateFormat: "YYYY-MM-DD",
   api: {
     url: "http://covid.vps.tecnico.ulisboa.pt/api",
     endpoints: endpoints,
@@ -16,9 +17,10 @@ const prodConfig = (_) => ({
 
 const devConfig = (_) => ({
   defaultMapLocationId: "continente",
-  dateRange: 5,
+  dateRange: 15,
   // if selectedDate +- rangeFetchPadding is a cach miss, fetch the dateRange for the selectedDate
-  rangeFetchPadding: 3,
+  rangeFetchPadding: 5,
+  dateFormat: "YYYY-MM-DD",
   api: {
     url: "http://localhost:9000",
     endpoints: endpoints,

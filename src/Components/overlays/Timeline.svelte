@@ -1,10 +1,21 @@
 <script>
-  import { availableDates } from "../../stores";
+  import { availableDates, player } from "../../stores";
 
   import Player from "../Player.svelte";
   import Wrapper from "./Wrapper.svelte";
 
   let timeout = null;
+
+  const startPlayoutIfNeeded = () => {
+    !timeout && setTimeout(playerHandler, 1000);
+  };
+
+  const stopPlayoutIfNeeded = () => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+  };
 
   const handleSelection = (selectedDate) => {
     availableDates.selectDate(selectedDate);
@@ -22,18 +33,21 @@
     availableDates.selectDate(nextDate);
   };
 
-  const didPlay = () => {
-    !timeout && setTimeout(playerHandler, 1000);
+  const shouldStartPlayout = () => {
+    player.setState({ ...$player, isPlaying: true });
   };
 
-  const didPause = (_) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
+  const shouldPausePlayout = (_) => {
+    player.setState({ ...$player, isPlaying: false });
+  };
+
+  player.subscribe((playerStore) => {
+    if (playerStore.isPlaying) {
+      startPlayoutIfNeeded();
+    } else if (!playerStore.isPlaying) {
+      stopPlayoutIfNeeded();
     }
-  };
-
-  const didStopPlayout = (_) => {};
+  });
 </script>
 
 <Wrapper topLeft>
@@ -41,9 +55,8 @@
     isPlaying={timeout !== null}
     items={$availableDates.dates}
     selectItem={handleSelection}
-    {didPlay}
-    {didPause}
-    {didStopPlayout}
+    {shouldStartPlayout}
+    {shouldPausePlayout}
   />
 </Wrapper>
 

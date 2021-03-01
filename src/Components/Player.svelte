@@ -3,8 +3,8 @@
   export let isPlaying;
   export let items;
   export let selectItem;
-  export let didPlay;
-  export let didPause;
+  export let shouldStartPlayout;
+  export let shouldPausePlayout;
   let currentPosition = 0;
 
   availableDates.subscribe((store) => {
@@ -73,6 +73,14 @@
     document.getElementById("tooltip").style.left = `${scrubOffset}px`;
     document.getElementById("tooltip").innerHTML = getSelectedItem();
   };
+
+  const handlePlayerState = () => {
+    if ($player.isPlaying) {
+      shouldPausePlayout();
+    } else {
+      shouldStartPlayout();
+    }
+  };
 </script>
 
 <svelte:window on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} />
@@ -82,7 +90,7 @@
     <div id="scrub" on:mousedown={handleMouseDown} />
   </div>
   <div class="buttons-container">
-    <button on:click={isPlaying ? didPause : didPlay}
+    <button on:click={handlePlayerState}
       ><img
         src={isPlaying ? "/images/pause.png" : "/images/play.png"}
         height="20"
