@@ -21,10 +21,26 @@
     availableDates.selectDate(selectedDate);
   };
 
+  const indexOfSelectedDate = () => {
+    let { selectedDate, dates } = $availableDates;
+    for (let i = 0; i < dates.length; i++) {
+      if (dates[i].date === selectedDate) {
+        return i;
+      }
+    }
+    return null;
+  };
+
   const getNextDate = (_) => {
-    const selectedDate = $availableDates.selectedDate;
-    const selectedIndex = $availableDates.dates.indexOf(selectedDate);
-    return $availableDates.dates[selectedIndex + 1];
+    const selectedIndex = indexOfSelectedDate();
+    let { dates } = $availableDates;
+    console.log("current: ", dates[selectedIndex].date);
+    console.log("next   : ", dates[selectedIndex + 1].date);
+    if (selectedIndex !== null && selectedIndex < dates.length - 1) {
+      return dates[selectedIndex + 1].date;
+    } else {
+      return dates[0].date;
+    }
   };
 
   const playerHandler = (_) => {

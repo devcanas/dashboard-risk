@@ -7,10 +7,20 @@
   export let shouldPausePlayout;
   let currentPosition = 0;
 
+  const indexOfSelectedDate = () => {
+    let { selectedDate, dates } = $availableDates;
+    for (let i = 0; i < dates.length; i++) {
+      if (dates[i].date === selectedDate) {
+        return i;
+      }
+    }
+    return null;
+  };
+
   availableDates.subscribe((store) => {
     if (!document.getElementById("timeline")) return;
-    const { dates, selectedDate } = store;
-    const selectedIndex = dates.indexOf(selectedDate);
+    const { dates } = $availableDates;
+    const selectedIndex = indexOfSelectedDate();
     const stepWidth =
       document.getElementById("timeline").getBoundingClientRect().width /
       dates.length;
@@ -27,7 +37,7 @@
     let selectedItemIndex = parseInt(
       (currentPosition * (items.length - 1)) / getTimelineCoords().width
     );
-    return items[selectedItemIndex];
+    return items[selectedItemIndex].date;
   };
 
   const getTimelineCoords = (_) =>

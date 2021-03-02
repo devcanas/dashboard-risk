@@ -36,18 +36,34 @@
     return `${year}-${month}-${day}`;
   };
 
-  let formattedSelected = prettyFormat(new Date($availableDates.selectedDate));
-
-  const dateFromString = (str) => {
-    if (str === null) return;
-    const parts = str.split("-");
-    return new Date(parts[0], parts[1] - 1, parts[2]);
+  const indexOfSelectedDate = () => {
+    let { selectedDate, dates } = $availableDates;
+    for (let i = 0; i < dates.length; i++) {
+      if (dates[i].date === selectedDate) {
+        return i;
+      }
+    }
+    return null;
   };
+
+  $: isPrediction = () => {
+    let { dates } = $availableDates;
+    let selectedIndex = indexOfSelectedDate();
+    return dates[selectedIndex].isPred;
+  };
+
+  let formattedSelected = prettyFormat(new Date($availableDates.selectedDate));
 </script>
 
 {#if $availableDates.selectedDate !== null}
   <Wrapper topRight>
     <div class="info-wrapper">
+      {#if isPrediction()}
+        <div id="pred_warning">
+          <img src="/images/warn.png" width="25" alt="warning" />
+          <span>Dados de previsão</span>
+        </div>
+      {/if}
       <div class="date-picker-wrapper">
         <DatePicker
           on:dateSelected={(e) => {
@@ -115,5 +131,16 @@
     margin-left: 20px;
 
     transform: rotate(-90deg);
+  }
+
+  #pred_warning {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  #pred_warning span {
+    margin-left: 10px;
+    font-weight: 600;
   }
 </style>
