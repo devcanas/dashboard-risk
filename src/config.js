@@ -2,7 +2,7 @@ const prodConfig = (_) => ({
   defaultMapLocationId: "continente",
   dateRange: 15,
   // if selectedDate +- rangeFetchPadding is a cach miss, fetch the dateRange for the selectedDate
-  rangeFetchPadding: 3,
+  rangeFetchPadding: 5,
   dateFormat: "YYYY-MM-DD",
   api: {
     url: "http://covid.vps.tecnico.ulisboa.pt/api",
@@ -62,4 +62,4 @@ const endpoints = {
 // Manually change to produce prod / dev environments for the app
 // This changes the endpoints as well as any configs you include in the objects below
 // The configs should have parity betwen them
-export default devConfig();
+export default prodConfig();
