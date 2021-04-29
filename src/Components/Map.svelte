@@ -2,16 +2,13 @@
   import Overlays from "./Overlays.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
   import {
-    mapMode,
     mapInfo,
     sahInfo,
     loading,
     availableDates,
-    mapLocation,
     riskProps,
     sahChart,
   } from "../stores";
-  import style from "./helpers/style";
   import createMap from "./helpers/createMap";
   import {
     getConcelhoSahValue,
@@ -20,15 +17,16 @@
   } from "./helpers/mapUtils";
   import { onMount } from "svelte";
   import FetchService from "../network/FetchService";
-  import { defaultLocation } from "../constants";
   import showChartFor from "./helpers/chartData";
 
   // layers
   let map;
+  var iterator = 0;
   var layerRisk;
   var layerConcelhos;
 
   const setLayerStyles = () => {
+    iterator = 0;
     layerConcelhos && layerConcelhos.setStyle(concelhosStyle);
     layerRisk &&
       Object.keys($riskProps).length > 0 &&
@@ -43,30 +41,27 @@
     setLayerStyles();
   });
 
-  mapMode.subscribe((_) => {
-    setLayerStyles();
-  });
-
-  mapLocation.subscribe(({ coords, zoom }) => {
-    map && map.flyTo(coords, zoom, { duration: 1 });
-  });
-
   const propsFor = (layer) => {
     return getProps($riskProps, layer, $availableDates.selectedDate);
   };
 
   const riskIqdStyle = (feature) => {
-    return style.riskIqd.getStyle(propsFor(feature), $mapMode);
+    return {
+      fillColor: iterator++ < 10010 ? "#00ff00" : "#ff0000",
+      weight: 0,
+      dashArray: "0",
+      fillOpacity: 1,
+    }; // style.riskIqd.getStyle(propsFor(feature), $mapMode);
   };
 
-  const concelhosStyle = (feature) =>
-    style.concelhos.getStyle(
-      $mapMode,
-      getConcelhoSahValue(
-        feature.properties.NAME_2,
-        $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
-      )
-    );
+  const concelhosStyle = (feature) => {};
+  // style.concelhos.getStyle(
+  //   $mapMode,
+  //   getConcelhoSahValue(
+  //     feature.properties.NAME_2,
+  //     $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+  //   )
+  // );
 
   const geoProps = (e) =>
     layerConcelhos &&
@@ -97,7 +92,7 @@
     });
     layerRisk.on("mouseout", (e) => {
       e.layer.setStyle({
-        fillColor: style.riskIqd.getColor(propsFor(e.layer.feature), $mapMode),
+        fillColor: "#00ff00",
       });
       mapInfo.reset();
     });
@@ -110,13 +105,7 @@
     });
     layerConcelhos.on("mouseout", (e) => {
       e.layer.setStyle({
-        fillColor: style.concelhos.getColor(
-          $mapMode,
-          getConcelhoSahValue(
-            e.layer.feature.properties.NAME_2,
-            $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
-          )
-        ),
+        fillColor: "#00ff00",
       });
       mapInfo.reset();
     });
@@ -154,7 +143,7 @@
 
   onMount(() => {
     loading.setState({ ...$loading, isLayerLoading: true });
-    map = createMap(defaultLocation);
+    map = createMap();
     FetchService.concelhosLayer(concelhosStyle, setupConcelhosLayer);
     FetchService.riskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
     configureEventListenersForMap();
@@ -164,7 +153,7 @@
 <div class="map-wrapper">
   <div id="covid-risk-map" />
   <Overlays />
-  <LoadingSpinner isLoading={$loading.isLayerLoading} />
+  <!-- <LoadingSpinner isLoading={$loading.isLayerLoading} /> -->
 </div>
 
 <style>

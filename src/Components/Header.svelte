@@ -1,31 +1,37 @@
 <script>
-  import { mapMode, mapLocation, availableDates } from "../stores";
-  import { Locations, MapModes } from "../constants";
   import Toggle from "./Toggle.svelte";
+  import { menuSelection } from "../stores/index";
 
-  $: isSelectedLocation = (item) => {
-    return $mapLocation === item;
+  export let infoSourceItems;
+  export let mapLocationItems;
+
+  /// Info Source
+
+  $: isSelectedInfoSource = (id) => {
+    return id === $menuSelection.selectedInfoSourceId;
   };
 
-  let onClickLocation = (item) => {
-    mapLocation.setState(item);
+  let selectInfoSource = (id) => {
+    menuSelection.setInfoSourceId(id);
   };
 
-  $: isSelectedMapMode = (item) => {
-    return $mapMode === item;
+  // Map location
+
+  $: isSelectedMapLocation = (id) => {
+    return id === $menuSelection.selectedMapLocationId;
   };
 
-  let onClickMapMode = (item) => {
-    mapMode.setState(item);
+  let selectMapLocation = (id) => {
+    menuSelection.setMapLocationId(id);
   };
 
   const downloadMapAsPng = () => {
-    const imgUrl = document.querySelector("canvas").toDataURL("image/png");
-    const a = document.getElementById("map-dl");
-    const download_name = `${$mapLocation.label}_${$mapMode.label}_${$availableDates.selectedDate}`;
-    a.download = download_name;
-    a.href = imgUrl;
-    a.click();
+    // const imgUrl = document.querySelector("canvas").toDataURL("image/png");
+    // const a = document.getElementById("map-dl");
+    // const download_name = `${$mapLocation.label}_${$mapMode.label}_${$availableDates.selectedDate}`;
+    // a.download = download_name;
+    // a.href = imgUrl;
+    // a.click();
   };
 </script>
 
@@ -33,21 +39,21 @@
   <div class="info-controls-wrapper">
     <h1>Dashboard Risco Covid-19</h1>
     <Toggle
-      items={MapModes}
-      bind:selected={isSelectedMapMode}
-      bind:onClick={onClickMapMode}
+      items={infoSourceItems}
+      bind:isSelected={isSelectedInfoSource}
+      bind:select={selectInfoSource}
     />
     <Toggle
-      items={Locations}
-      bind:selected={isSelectedLocation}
-      bind:onClick={onClickLocation}
+      items={mapLocationItems}
+      bind:isSelected={isSelectedMapLocation}
+      bind:select={selectMapLocation}
     />
   </div>
-  <img
+  <!-- <img
     on:click={downloadMapAsPng}
     src="images/download-button.png"
     alt="download"
-  />
+  /> -->
 </div>
 
 <style>

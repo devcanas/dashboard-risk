@@ -8,12 +8,13 @@
     sahInfo,
     riskProps,
     loading,
-    mapMode,
     player,
+    menus,
   } from "./stores";
   import FetchService from "./network/FetchService";
   import moment from "moment";
   import config from "./config";
+  import { menuSelection } from "./stores/index";
 
   const fetchMissingProps = (
     selectedDate,
@@ -48,13 +49,7 @@
     return cacheMiss(daysBefore(date)) || cacheMiss(daysAfter(date));
   };
 
-  const cacheMiss = (date) => {
-    if ($mapMode.isSAHMap) {
-      return cacheMissSah(date);
-    } else {
-      return cacheMissRisk(date);
-    }
-  };
+  const cacheMiss = (date) => {};
 
   const cacheMissRisk = (date) => {
     // key represents geojson feature so it is
@@ -116,20 +111,21 @@
     loadPropsIfNeeded(selectedDate);
   });
 
-  mapMode.subscribe(() => {
-    loadPropsIfNeeded($availableDates.selectedDate);
-  });
-
   onMount((_) => {
-    loading.setState({ ...$loading, isLayerLoading: true });
-    FetchService.availableDates((dates) => {
-      availableDates.setState(dates);
+    // loading.setState({ ...$loading, isLayerLoading: true });
+    FetchService.initialConfiguration((config) => {
+      const { defaultSelectionState, ...menuConfig } = config.menus;
+      menuSelection.setState(defaultSelectionState);
+      menus.setState(menuConfig);
     });
   });
 </script>
 
 <div class="container">
-  <Header />
+  <Header
+    infoSourceItems={$menus.infoSourceMenu || []}
+    mapLocationItems={$menus.mapLocationMenu || []}
+  />
   <div class="container__map">
     <Map />
   </div>

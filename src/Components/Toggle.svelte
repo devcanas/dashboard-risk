@@ -1,14 +1,14 @@
 <script>
   export let items;
-  export let selected;
-  export let onClick;
+  export let isSelected;
+  export let select;
 </script>
 
 <div class="type-toggle">
-  {#each items as item (item.label)}
+  {#each items as item (item.name)}
     <span
-      on:click={(_) => onClick(item)}
-      class={selected(item) ? "selected" : ""}>{item.label}</span
+      on:click={(_) => select(item.id)}
+      class={isSelected(item.id) ? "selected" : ""}>{item.name}</span
     >
   {/each}
 </div>

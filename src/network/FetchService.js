@@ -1,4 +1,3 @@
-import { Endpoints } from "../constants";
 import { endpointForInit } from "./endpoints/init";
 import {
   endpointForConcelhosLayer,
@@ -31,7 +30,7 @@ const getLayer = async (endpoint, style, cb) => {
 
 // API requests
 
-const availableDates = async (success, fail) => {
+const initialConfiguration = async (success, fail) => {
   return get(endpointForInit(), success, console.log);
 };
 
@@ -58,7 +57,7 @@ export const concelhosLayer = async (style, cb) =>
 // Exports
 
 const FetchService = {
-  availableDates,
+  initialConfiguration,
   riskIQDLayer,
   concelhosLayer,
   propertiesByDate,

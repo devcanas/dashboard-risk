@@ -11,7 +11,9 @@ const tileLayer = L.tileLayer(
   }
 );
 
-const mapSettings = ({ coords, zoom }) => ({
+const mapSettings = (
+  { coords, zoom } = { coords: [39.38950933, -7.77282714], zoom: 7 }
+) => ({
   center: coords,
   zoom: zoom,
   minZoom: MIN_ZOOM,
