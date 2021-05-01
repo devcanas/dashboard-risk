@@ -6,14 +6,22 @@
   import { menuSelection } from "../stores/";
   import { menus } from "../stores";
 
+  const defaultMenuId = "risco";
+
   $: colorScaleMenu = (selectedMenuId) => {
-    return $menus.infoSourceMenu.filter(
-      (item) => item.id === selectedMenuId
-    )[0];
+    return (
+      $menus &&
+      $menus.infoSourceMenu &&
+      $menus.infoSourceMenu.filter((item) => item.id === selectedMenuId)[0]
+    );
   };
 </script>
 
 <Chart />
 <Info />
-<ColorScale menu={colorScaleMenu($menuSelection.selectedInfoSourceId)} />
+<ColorScale
+  menu={colorScaleMenu(
+    ($menuSelection && $menuSelection.selectedInfoSourceId) || defaultMenuId
+  )}
+/>
 <Timeline />

@@ -1,16 +1,3 @@
-import { endpointForInit } from "./endpoints/init";
-import {
-  endpointForConcelhosLayer,
-  endpointForRiskLayer,
-} from "./endpoints/layers";
-import {
-  endpointForSahByConcelho,
-  endpointForSahByDate,
-} from "./endpoints/nos";
-import { endpointForPropertiesByDate } from "./endpoints/risk";
-
-// Helper functions
-
 const get = async (endpoint, success, failure = (_) => {}) => {
   return fetch(endpoint)
     .then((res) => res.json())
@@ -31,7 +18,7 @@ const getLayer = async (endpoint, style, cb) => {
 // API requests
 
 const initialConfiguration = async (success, fail) => {
-  return get(endpointForInit(), success, console.log);
+  return get("http://localhost:9000/init", success, console.log);
 };
 
 const propertiesByDate = async (date, asRange, success, fail) => {
@@ -46,23 +33,23 @@ const sahByConcelho = async (concelho, success, fail) => {
   return get(endpointForSahByConcelho(concelho), success, console.log);
 };
 
-// Layer requests
-
-export const riskIQDLayer = async (style, cb) =>
-  getLayer(endpointForRiskLayer(), style, cb);
-
-export const concelhosLayer = async (style, cb) =>
-  getLayer(endpointForConcelhosLayer(), style, cb);
-
 // Exports
 
 const FetchService = {
   initialConfiguration,
-  riskIQDLayer,
-  concelhosLayer,
   propertiesByDate,
   sahByDate,
   sahByConcelho,
+  getLayer,
 };
+
+class FetchService {
+
+  static getLayers()
+
+  constructor(config) {
+    this.config = config;
+  }
+}
 
 export default FetchService;

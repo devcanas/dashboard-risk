@@ -8,6 +8,9 @@
     availableDates,
     riskProps,
     sahChart,
+    endpoints,
+    menuSelection,
+    menus,
   } from "../stores";
   import createMap from "./helpers/createMap";
   import {
@@ -16,7 +19,7 @@
     getProps,
   } from "./helpers/mapUtils";
   import { onMount } from "svelte";
-  import FetchService from "../network/FetchService";
+  import FetchService from "../FetchService";
   import showChartFor from "./helpers/chartData";
 
   // layers
@@ -39,6 +42,21 @@
 
   loading.subscribe(() => {
     setLayerStyles();
+  });
+
+  const changeMapLocationIfNeeded = (mapLocationId) => {
+    const selectedLocation = $menus.mapLocationMenu.filter(
+      (menu) => menu.id === mapLocationId
+    )[0];
+
+    if (selectedLocation) {
+      const { lat, long, zoom } = selectedLocation.coordinates;
+      map && map.flyTo([lat, long], zoom, { duration: 1 });
+    }
+  };
+
+  menuSelection.subscribe((selectionState) => {
+    changeMapLocationIfNeeded(selectionState.selectedMapLocationId);
   });
 
   const propsFor = (layer) => {
@@ -142,10 +160,9 @@
   };
 
   onMount(() => {
-    loading.setState({ ...$loading, isLayerLoading: true });
     map = createMap();
-    FetchService.concelhosLayer(concelhosStyle, setupConcelhosLayer);
-    FetchService.riskIQDLayer(riskIqdStyle, setupRiskIqdLayer);
+    console.log($endpoints);
+    // FetchService.getLayer($endpoints)
     configureEventListenersForMap();
   });
 </script>

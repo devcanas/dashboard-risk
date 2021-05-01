@@ -7,6 +7,7 @@ import sahChartStore from "./sahChartStore";
 import playerStore from "./playerStore";
 import menuStore from "./menus";
 import menuSelectionStore from "./menuSelectionStore";
+import endpointStore from "./endpointStore";
 
 export const createMapInfoStore = mapInfoStore;
 export const createLoadingStore = loadingStore;
@@ -17,3 +18,4 @@ export const createRiskPropertiesStore = riskPropertiesStore;
 export const createSahChartStore = sahChartStore;
 export const createPlayerStore = playerStore;
 export const createMenusStore = menuStore;
+export const createEndpointStore = endpointStore;

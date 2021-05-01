@@ -8,6 +8,7 @@ import {
   createPlayerStore,
   createMenusStore,
   createMenuSelectionStore,
+  createEndpointStore,
 } from "./stores";
 
 export const loading = createLoadingStore();
@@ -19,3 +20,4 @@ export const riskProps = createRiskPropertiesStore();
 export const sahChart = createSahChartStore();
 export const player = createPlayerStore();
 export const menus = createMenusStore();
+export const endpoints = createEndpointStore();
