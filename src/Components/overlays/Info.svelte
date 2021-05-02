@@ -1,6 +1,5 @@
 <script>
   import Wrapper from "./Wrapper.svelte";
-  import { availableDates, mapInfo } from "../../stores";
 
   $: isPrediction = () => {
     let { dates } = $availableDates;

@@ -42,7 +42,7 @@ const initialConfiguration = () => {
   return get(configEndpoint);
 };
 
-const propertiesByDate = async (date, asRange = false) => {
+const riskIqd = async (date, asRange = false) => {
   if (!date) {
     console.error(`Invalid date for request: ${date}`);
   }
@@ -79,7 +79,7 @@ const init = (endpoints) => {
 
 const FetchService = {
   initialConfiguration,
-  propertiesByDate,
+  riskIqd,
   sahByDate,
   sahByConcelho,
   getLayers,

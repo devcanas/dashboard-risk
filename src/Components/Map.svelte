@@ -1,17 +1,9 @@
 <script>
   import Overlays from "./Overlays.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import {
-    mapInfo,
-    sahInfo,
-    loading,
-    availableDates,
-    riskProps,
-    sahChart,
-    menuSelection,
-    menus,
-  } from "../stores";
+  import { loading, menuSelection, menus, riskIqd } from "../stores";
   import createMap from "./helpers/createMap";
+  import decompressRLE from "./helpers/decompressRLE";
   import {
     getConcelhoSahValue,
     getGeoProps,
@@ -23,24 +15,11 @@
 
   // layers
   let map;
-  var iterator = 0;
   var layerRisk;
   var layerConcelhos;
 
-  const setLayerStyles = () => {
-    iterator = 0;
-    layerConcelhos && layerConcelhos.setStyle(concelhosStyle);
-    layerRisk &&
-      Object.keys($riskProps).length > 0 &&
-      layerRisk.setStyle(riskIqdStyle);
-  };
-
-  availableDates.subscribe(() => {
-    setLayerStyles();
-  });
-
-  loading.subscribe(() => {
-    setLayerStyles();
+  riskIqd.subscribe((state) => {
+    layerRisk && layerRisk.setStyle(riskIqdStyle);
   });
 
   const changeMapLocationIfNeeded = (mapLocationId) => {
@@ -58,60 +37,20 @@
     changeMapLocationIfNeeded(selectionState.selectedMapLocationId);
   });
 
-  const propsFor = (layer) => {
-    return getProps($riskProps, layer, $availableDates.selectedDate);
-  };
-
   const riskIqdStyle = (feature) => {
     return {
-      fillColor: iterator++ < 10010 ? "#00ff00" : "#ff0000",
-      weight: 0,
-      dashArray: "0",
-      fillOpacity: 1,
-    }; // style.riskIqd.getStyle(propsFor(feature), $mapMode);
-  };
-
-  const concelhosStyle = (feature) => {};
-  // style.concelhos.getStyle(
-  //   $mapMode,
-  //   getConcelhoSahValue(
-  //     feature.properties.NAME_2,
-  //     $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
-  //   )
-  // );
-
-  const geoProps = (e) =>
-    layerConcelhos &&
-    getGeoProps(
-      e.latlng,
-      layerConcelhos,
-      $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
-    );
-
-  const updateRiskInfo = (e) => {
-    const riskInfo = propsFor(e.layer.feature);
-    updateInfo(riskInfo, geoProps(e));
-  };
-
-  const updateConcelhoInfo = (e) => {
-    updateInfo(null, geoProps(e));
-  };
-
-  const updateInfo = (riskInfo, geoProps) => {
-    if (geoProps) mapInfo.setState({ ...riskInfo, ...geoProps });
-    else mapInfo.reset();
+      fillColor: $riskIqd.colors.risk[feature.properties.i],
+    };
   };
 
   function configureEventListenersForRisk() {
     layerRisk.on("mouseover", (e) => {
       e.layer.setStyle({ fillColor: "#7d7d7d" });
-      updateRiskInfo(e);
     });
     layerRisk.on("mouseout", (e) => {
       e.layer.setStyle({
-        fillColor: "#00ff00",
+        fillColor: $riskIqd.colors.risk[e.layer.feature.properties.i],
       });
-      mapInfo.reset();
     });
   }
 
@@ -121,6 +60,7 @@
       updateConcelhoInfo(e);
     });
     layerConcelhos.on("mouseout", (e) => {
+      console.log(e.layer);
       e.layer.setStyle({
         fillColor: "#00ff00",
       });
@@ -130,17 +70,17 @@
 
   const configureEventListenersForMap = () => {
     map.on("click", (e) => {
-      const geoProps = getGeoProps(
-        e.latlng,
-        layerConcelhos,
-        $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
-      );
-      if (geoProps) {
-        loading.setState({ ...$loading, isConcelhoChartLoading: true });
-        showChartFor(geoProps.concelho, sahChart, () => {
-          loading.setState({ ...$loading, isConcelhoChartLoading: false });
-        });
-      }
+      // const geoProps = getGeoProps(
+      //   e.latlng,
+      //   layerConcelhos,
+      //   $sahInfo.filter((it) => it.date === $availableDates.selectedDate)
+      // );
+      // if (geoProps) {
+      //   loading.setState({ ...$loading, isConcelhoChartLoading: true });
+      //   showChartFor(geoProps.concelho, sahChart, () => {
+      //     loading.setState({ ...$loading, isConcelhoChartLoading: false });
+      //   });
+      // }
     });
   };
 
@@ -152,7 +92,14 @@
   };
 
   const setupRiskIqdLayer = (json) => {
-    const layer = L.geoJSON(json, riskIqdStyle);
+    const layer = L.geoJSON(json, {
+      style: {
+        fillColor: "#ffffff00",
+        weight: 0,
+        dashArray: "0",
+        fillOpacity: 0.6,
+      },
+    });
     layer.addTo(map);
     layerRisk = layer;
     layer.bringToBack();
@@ -165,16 +112,36 @@
     setupRiskIqdLayer(risk);
     // setupConcelhosLayer(concelhos);
     configureEventListenersForMap();
+
+    const dataRes = await FetchService.riskIqd("sidjfjsd");
+    const { date, colors, values } = dataRes;
+
+    let riskColors = decompressRLE(colors.risk);
+    let iqdColors = decompressRLE(colors.iqd);
+
+    riskIqd.setState({
+      date,
+      values,
+      colors: { risk: riskColors, iqd: iqdColors },
+    });
   });
 </script>
 
-<div class="map-wrapper">
-  <div id="covid-risk-map" />
-  <Overlays />
-  <!-- <LoadingSpinner isLoading={$loading.isLayerLoading} /> -->
+<div class="container__map">
+  <div class="map-wrapper">
+    <div id="covid-risk-map" />
+    <Overlays />
+    <!-- <LoadingSpinner isLoading={$loading.isLayerLoading} /> -->
+  </div>
 </div>
 
 <style>
+  .container__map {
+    width: 100%;
+    height: calc(100vh - 160px);
+    display: flex;
+  }
+
   .map-wrapper {
     position: relative;
     flex: 1;

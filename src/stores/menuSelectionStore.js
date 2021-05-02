@@ -14,7 +14,7 @@ const menuSelectionStore = (_) => ({
     update((state) => ({ ...state, selectedInfoSourceId: id })),
   setMapLocationId: (id) =>
     update((state) => ({ ...state, selectedMapLocationId: id })),
-  reset: () => set(Locations.default.coords),
+  reset: () => set(initialState),
 });
 
 export default menuSelectionStore;

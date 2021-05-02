@@ -1,7 +1,6 @@
 <script>
   import ColorScale from "./overlays/ColorScale.svelte";
   import Info from "./overlays/Info.svelte";
-  import Chart from "./overlays/Chart.svelte";
   import { menuSelection } from "../stores/";
   import { menus } from "../stores";
 
@@ -16,8 +15,6 @@
   };
 </script>
 
-<Chart />
-<Info />
 <ColorScale
   menu={colorScaleMenu(
     ($menuSelection && $menuSelection.selectedInfoSourceId) || defaultMenuId

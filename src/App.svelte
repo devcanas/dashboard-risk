@@ -2,10 +2,10 @@
   import Header from "./Components/Header.svelte";
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
+  import DownloadDummy from "./Components/DownloadDummy.svelte";
   import { menus } from "./stores";
   import { menuSelection } from "./stores/index";
   import FetchService from "./FetchService";
-  import { onMount } from "svelte";
 
   export let config;
 
@@ -22,13 +22,9 @@
     infoSourceItems={$menus.infoSourceMenu}
     mapLocationItems={$menus.mapLocationMenu}
   />
-  <div class="container__map">
-    <Map />
-  </div>
+  <Map />
   <Footer />
-  <a id="map-dl" style="display: none" href="move along" download
-    >... these are not the tags you are looking for</a
-  >
+  <DownloadDummy />
 </div>
 
 <style>
@@ -40,11 +36,5 @@
     justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-  }
-
-  .container__map {
-    width: 100%;
-    height: calc(100vh - 160px);
-    display: flex;
   }
 </style>
