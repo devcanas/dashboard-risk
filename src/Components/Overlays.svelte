@@ -2,7 +2,6 @@
   import ColorScale from "./overlays/ColorScale.svelte";
   import Info from "./overlays/Info.svelte";
   import Chart from "./overlays/Chart.svelte";
-  import Timeline from "./overlays/Timeline.svelte";
   import { menuSelection } from "../stores/";
   import { menus } from "../stores";
 
@@ -24,4 +23,3 @@
     ($menuSelection && $menuSelection.selectedInfoSourceId) || defaultMenuId
   )}
 />
-<Timeline />

@@ -8,7 +8,6 @@
     availableDates,
     riskProps,
     sahChart,
-    endpoints,
     menuSelection,
     menus,
   } from "../stores";
@@ -152,17 +151,19 @@
     configureEventListenersForConcelhos();
   };
 
-  const setupRiskIqdLayer = (layer) => {
+  const setupRiskIqdLayer = (json) => {
+    const layer = L.geoJSON(json, riskIqdStyle);
     layer.addTo(map);
     layerRisk = layer;
     layer.bringToBack();
     configureEventListenersForRisk();
   };
 
-  onMount(() => {
+  onMount(async () => {
     map = createMap();
-    console.log($endpoints);
-    // FetchService.getLayer($endpoints)
+    const { risk, concelhos } = await FetchService.getLayers();
+    setupRiskIqdLayer(risk);
+    // setupConcelhosLayer(concelhos);
     configureEventListenersForMap();
   });
 </script>

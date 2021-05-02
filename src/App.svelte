@@ -2,18 +2,19 @@
   import Header from "./Components/Header.svelte";
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
-  import { onMount } from "svelte";
-  import { menus, endpoints } from "./stores";
+  import { menus } from "./stores";
   import { menuSelection } from "./stores/index";
+  import FetchService from "./FetchService";
+  import { onMount } from "svelte";
 
   export let config;
 
   const { clientEndpoints, ...menusConfig } = config;
   const { defaultSelectionState, ...menuConfig } = menusConfig.menus;
 
+  FetchService.init(clientEndpoints);
   menus.setState(menuConfig);
   menuSelection.setState(defaultSelectionState);
-  endpoints.setState(clientEndpoints);
 </script>
 
 <div class="container">
