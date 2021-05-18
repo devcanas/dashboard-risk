@@ -35,10 +35,11 @@
     min-width: 200px;
   }
   .color-scale-title {
-    background-color: rgb(0, 35, 155);
+    background-color: rgb(39, 120, 173);
     padding: 15px;
     color: white;
-    box-shadow: 0 0 5px black;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
   }
 
   .color-scale-context {

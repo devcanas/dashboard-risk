@@ -1,29 +1,5 @@
 <script>
-  import Toggle from "./Toggle.svelte";
   import { menuSelection } from "../stores/index";
-
-  export let infoSourceItems;
-  export let mapLocationItems;
-
-  /// Info Source
-
-  $: isSelectedInfoSource = (id) => {
-    return id === $menuSelection.selectedInfoSourceId;
-  };
-
-  let selectInfoSource = (id) => {
-    menuSelection.setInfoSourceId(id);
-  };
-
-  // Map location
-
-  $: isSelectedMapLocation = (id) => {
-    return id === $menuSelection.selectedMapLocationId;
-  };
-
-  let selectMapLocation = (id) => {
-    menuSelection.setMapLocationId(id);
-  };
 
   const downloadMapAsPng = () => {
     // const imgUrl = document.querySelector("canvas").toDataURL("image/png");
@@ -36,19 +12,6 @@
 </script>
 
 <div class="header">
-  <div class="info-controls-wrapper">
-    <h1>Dashboard Risco Covid-19</h1>
-    <Toggle
-      items={infoSourceItems}
-      bind:isSelected={isSelectedInfoSource}
-      bind:select={selectInfoSource}
-    />
-    <Toggle
-      items={mapLocationItems}
-      bind:isSelected={isSelectedMapLocation}
-      bind:select={selectMapLocation}
-    />
-  </div>
   <!-- <img
     on:click={downloadMapAsPng}
     src="images/download-button.png"
@@ -57,20 +20,19 @@
 </div>
 
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=XanhMono&display=swap");
   .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    width: 100vw;
+    justify-content: center;
+    position: absolute;
+    left: 55px;
+    top: 10px;
+    border-radius: 10px;
+    z-index: 1;
+    width: auto;
     height: 65px;
-    padding: 10px 20px 10px 20px;
-
-    background-color: rgb(0, 35, 155);
-    color: white;
-
-    box-shadow: 0 0 10px #555;
+    padding: 10px;
+    background-color: rgba(212, 218, 220, 0.5);
   }
 
   .info-controls-wrapper {
@@ -80,12 +42,12 @@
   }
 
   h1 {
-    margin-right: 50px;
-    font-weight: 400;
-    font-size: 25px;
+    font-family: "Roboto Condensed", sans-serif;
+    color: #444;
+    font-size: 40px;
   }
 
-  img {
+  /* img {
     background-color: rgba(0, 0, 0, 0);
     border: none;
     cursor: pointer;
@@ -93,5 +55,5 @@
     height: 40px;
     border-radius: 50%;
     box-shadow: 0 0 20px -1px #333;
-  }
+  } */
 </style>

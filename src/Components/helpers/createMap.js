@@ -1,6 +1,3 @@
-const MIN_ZOOM = 7; // less than 7 the visualization gets bugged (not enough pixels for each square)
-const MAX_ZOOM = 11;
-
 const tileLayer = L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
   {
@@ -12,20 +9,29 @@ const tileLayer = L.tileLayer(
 );
 
 const mapSettings = (
-  { coords, zoom } = { coords: [39.38950933, -7.77282714], zoom: 7 }
+  { coords, zoom } = {
+    coords: [39.56827914916011, -9.469218750000001],
+    zoom: 7,
+  }
 ) => ({
   center: coords,
   zoom: zoom,
-  minZoom: MIN_ZOOM,
-  maxZoom: MAX_ZOOM,
-  // without this, rendering 22 000 poligons
-  // gets painfully slow, and dragging/zooming the map is slow
+  minZoom: 7, // less zoomed than this and the map gets bugged out
+  maxZoom: 11,
   preferCanvas: true,
+  zoomControl: false,
 });
 
 const createMap = (locationDetails) => {
   const map = L.map("covid-risk-map", mapSettings(locationDetails));
   tileLayer.addTo(map);
+
+  L.control
+    .zoom({
+      position: "topright",
+    })
+    .addTo(map);
+
   return map;
 };
 

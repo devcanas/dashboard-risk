@@ -1,6 +1,5 @@
 <script>
   import ColorScale from "./overlays/ColorScale.svelte";
-  import Info from "./overlays/Info.svelte";
   import { menuSelection } from "../stores/";
   import { menus } from "../stores";
 

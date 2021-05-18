@@ -1,7 +1,7 @@
 <script>
-  import Header from "./Components/Header.svelte";
   import Map from "./Components/Map.svelte";
   import Footer from "./Components/Footer.svelte";
+  import Panel from "./Components/Panel/index.svelte";
   import DownloadDummy from "./Components/DownloadDummy.svelte";
   import { menus } from "./stores";
   import { menuSelection } from "./stores/index";
@@ -18,10 +18,7 @@
 </script>
 
 <div class="container">
-  <Header
-    infoSourceItems={$menus.infoSourceMenu}
-    mapLocationItems={$menus.mapLocationMenu}
-  />
+  <Panel />
   <Map />
   <Footer />
   <DownloadDummy />
@@ -34,7 +31,8 @@
     flex-direction: column;
     flex: 1 1 100%;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
+    position: relative;
   }
 </style>

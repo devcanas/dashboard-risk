@@ -29,7 +29,7 @@
 
     if (selectedLocation) {
       const { lat, long, zoom } = selectedLocation.coordinates;
-      map && map.flyTo([lat, long], zoom, { duration: 1 });
+      map && map.flyTo([lat, long], zoom, { duration: 0.2 });
     }
   };
 
@@ -70,6 +70,7 @@
 
   const configureEventListenersForMap = () => {
     map.on("click", (e) => {
+      console.log(e.latlng);
       // const geoProps = getGeoProps(
       //   e.latlng,
       //   layerConcelhos,
@@ -113,6 +114,8 @@
     // setupConcelhosLayer(concelhos);
     configureEventListenersForMap();
 
+    changeMapLocationIfNeeded("continente");
+
     const dataRes = await FetchService.riskIqd("sidjfjsd");
     const { date, colors, values } = dataRes;
 
@@ -138,7 +141,7 @@
 <style>
   .container__map {
     width: 100%;
-    height: calc(100vh - 160px);
+    height: calc(100vh - 95px);
     display: flex;
   }
 
