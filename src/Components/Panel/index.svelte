@@ -15,7 +15,7 @@
   .container {
     position: absolute;
     top: 0;
-    bottom: 95px;
+    bottom: 70px;
     z-index: 1;
     padding: 20px 25px;
     display: flex;

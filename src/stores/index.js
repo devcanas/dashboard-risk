@@ -1,11 +1,11 @@
-import {
-  createLoadingStore,
-  createMenusStore,
-  createMenuSelectionStore,
-  createRiskIqdStore,
-} from "./stores";
+import loadingStore from "./loadingStore";
+import menuStore from "./menus";
+import menuSelectionStore from "./menuSelectionStore";
+import riskIqdStore from "./riskIqdStore";
+import timelineControlsStore from "./timelineControls";
 
-export const loading = createLoadingStore();
-export const menuSelection = createMenuSelectionStore();
-export const menus = createMenusStore();
-export const riskIqd = createRiskIqdStore();
+export const loading = loadingStore();
+export const menuSelection = menuSelectionStore();
+export const menus = menuStore();
+export const riskIqd = riskIqdStore();
+export const timelineControls = timelineControlsStore();

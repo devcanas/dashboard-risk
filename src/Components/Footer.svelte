@@ -40,8 +40,8 @@
 <style>
   footer {
     width: 100%;
-    height: 95px;
-    background-color: rgb(212, 218, 220);
+    height: 70px;
+    background-color: rgb(255, 255, 255);
     display: flex;
     align-items: center;
   }

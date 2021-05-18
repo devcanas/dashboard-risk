@@ -141,7 +141,7 @@
 <style>
   .container__map {
     width: 100%;
-    height: calc(100vh - 95px);
+    height: calc(100vh - 70px);
     display: flex;
   }
 

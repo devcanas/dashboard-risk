@@ -1,7 +1,6 @@
 <script>
   import ColorScale from "./overlays/ColorScale.svelte";
-  import { menuSelection } from "../stores/";
-  import { menus } from "../stores";
+  import { menuSelection, menus } from "../stores/";
 
   const defaultMenuId = "risco";
 
