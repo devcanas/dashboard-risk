@@ -1,4 +1,5 @@
 <script>
+  import Player from "./Player.svelte";
   import Timeline from "./Timeline.svelte";
   import Toggles from "./Toggles.svelte";
 </script>
@@ -7,7 +8,7 @@
   <div class="header"><h1>Dashboard Risco Covid-19</h1></div>
   <div class="content">
     <Toggles />
-    <Timeline />
+    <Player />
   </div>
 </div>
 

@@ -3,18 +3,29 @@
   import Footer from "./Components/Footer.svelte";
   import Panel from "./Components/Panel/index.svelte";
   import DownloadDummy from "./Components/DownloadDummy.svelte";
-  import { menus } from "./stores";
-  import { menuSelection } from "./stores/index";
+  import {
+    menus,
+    menuSelection,
+    availableDatesStore,
+    colorsStore,
+  } from "./stores/index";
   import FetchService from "./FetchService";
+  import { onMount } from "svelte";
 
   export let config;
 
-  const { clientEndpoints, ...menusConfig } = config;
+  const { availableDates, clientEndpoints, ...menusConfig } = config;
   const { defaultSelectionState, ...menuConfig } = menusConfig.menus;
 
   FetchService.init(clientEndpoints);
   menus.setState(menuConfig);
   menuSelection.setState(defaultSelectionState);
+  availableDatesStore.setState(availableDates);
+
+  onMount(async () => {
+    const colors = await FetchService.colors("risco");
+    colorsStore.setState(colors);
+  });
 </script>
 
 <div class="container">

@@ -1,6 +1,9 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import { timelineControls } from "../../stores";
+  export let getLabelForTimeLineAt;
+  export let initialState;
+
   let controls;
 
   const handleMouseDownOnScrub = (e) => {
@@ -54,8 +57,18 @@
       scrubOffset = upperBoundX;
     }
 
-    // currentPosition = scrubOffset + getScrubCoords().width / 2;
-    scrubber.el.style.left = `${scrubOffset}px`;
+    setScrubberPosition(scrubOffset);
+
+    // have no idea why we need this, math should be ok...
+    const magicNumber = 0.019;
+    // FIXME: use this to give the user the date he is currently at while scrubbing.
+    const label = getLabelForTimeLineAt({
+      scrubberOffsetPercentage: scrubOffset / timeline.rect.width + magicNumber,
+    });
+  };
+
+  const setScrubberPosition = (offset) => {
+    controls.scrubber.el.style.left = `${offset}px`;
   };
 
   const offsetForAdjustedBound = (e, bound, { upperBoundX, lowerBoundX }) => {
@@ -72,26 +85,44 @@
     return offset;
   };
 
-  const handleAdjustLowerBound = (e) => {
+  const setBoundPositionAsPercentage = (percentage, isLowerBound) => {
+    const { timeline } = controls;
+    const offset = percentage * timeline.rect.width;
+    console.log(offset, percentage, timeline.rect.width);
+    const fn = isLowerBound ? setLowerBoundPosition : setUpperBoundPosition;
+    fn(offset);
+  };
+
+  const setLowerBoundPosition = (offset) => {
     const { lowerBound, leftFaded } = controls;
-    const lowerBoundX = -lowerBound.rect.width / 2;
-    const upperBoundX = scrubberBoundXFor({ bound: lowerBound });
-    const bounds = { lowerBoundX, upperBoundX };
-    const offset = offsetForAdjustedBound(e, lowerBound, bounds);
     lowerBound.el.style.left = `${offset}px`;
     leftFaded.style.width = `${offset + lowerBound.rect.width / 2}px`;
   };
 
-  const handleAdjustUpperBound = (e) => {
-    const { timeline, upperBound, rightFaded } = controls;
-    const lowerBoundX = scrubberBoundXFor({ bound: upperBound });
-    const upperBoundX = timeline.rect.width - upperBound.rect.width / 2;
-    const bounds = { lowerBoundX, upperBoundX };
-    const offset = offsetForAdjustedBound(e, upperBound, bounds);
+  const setUpperBoundPosition = (offset) => {
+    const { upperBound, rightFaded, timeline } = controls;
     upperBound.el.style.left = `${offset}px`;
     rightFaded.style.width = `${
       timeline.rect.width - offset - upperBound.rect.width / 2
     }px`;
+  };
+
+  const handleAdjustLowerBound = (e) => {
+    const { lowerBound } = controls;
+    const lowerBoundX = -lowerBound.rect.width / 2;
+    const upperBoundX = scrubberBoundXFor({ bound: lowerBound });
+    const bounds = { lowerBoundX, upperBoundX };
+    const offset = offsetForAdjustedBound(e, lowerBound, bounds);
+    setLowerBoundPosition(offset);
+  };
+
+  const handleAdjustUpperBound = (e) => {
+    const { timeline, upperBound } = controls;
+    const lowerBoundX = scrubberBoundXFor({ bound: upperBound });
+    const upperBoundX = timeline.rect.width - upperBound.rect.width / 2;
+    const bounds = { lowerBoundX, upperBoundX };
+    const offset = offsetForAdjustedBound(e, upperBound, bounds);
+    setUpperBoundPosition(offset);
   };
 
   const handleMouseMove = (e) => {
@@ -126,8 +157,14 @@
     };
   };
 
-  onMount(() => {
+  onMount(async () => {
     updateControlsMetadata();
+
+    const { lowerBoundPercent, upperBoundPercent, scrubPercent } = initialState;
+    setBoundPositionAsPercentage(upperBoundPercent, false);
+    const offset = scrubPercent * controls.timeline.rect.width;
+    setScrubberPosition(offset);
+    setBoundPositionAsPercentage(lowerBoundPercent, true);
   });
 </script>
 

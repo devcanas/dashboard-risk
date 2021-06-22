@@ -69,6 +69,10 @@ const sahByConcelho = async (concelho) => {
   return get(url);
 };
 
+const colors = (type) => {
+  return get("http://localhost:9000/riskIqd/colors");
+};
+
 const init = (endpoints) => {
   if (!apiEndpoints) {
     apiEndpoints = endpoints;
@@ -83,6 +87,7 @@ const FetchService = {
   sahByDate,
   sahByConcelho,
   getLayers,
+  colors,
   init,
 };
 
