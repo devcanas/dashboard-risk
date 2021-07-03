@@ -4,12 +4,6 @@
   import moment from "moment";
   import config from "../../config";
 
-  const initialState = {
-    lowerBoundPercent: 0.8,
-    upperBoundPercent: 1,
-    scrubPercent: 1,
-  };
-
   const getLabelForTimeLineAt = ({ scrubberOffsetPercentage }) => {
     const { selectedInfoSourceId } = $menuSelection;
     const { startDate, dataLength } = $availableDatesStore.filter(
@@ -23,4 +17,56 @@
   };
 </script>
 
-<Timeline {getLabelForTimeLineAt} {initialState} />
+<div id="wrapper">
+  <div id="player-controls">
+    <img
+      class="actionable"
+      src="/images/UI/playpause.png"
+      alt="Play and pause"
+    />
+    <img
+      class="fadeable actionable"
+      src="/images/UI/previousday.png"
+      alt="Previous Day"
+    />
+    <img
+      class="fadeable actionable"
+      src="/images/UI/nextday.png"
+      alt="Next Day"
+    />
+  </div>
+  <Timeline {getLabelForTimeLineAt} />
+</div>
+
+<style>
+  .actionable {
+    cursor: pointer;
+    pointer-events: visible;
+  }
+
+  .actionable:active {
+    opacity: 0.3;
+  }
+
+  #wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #player-controls {
+    display: flex;
+    margin-bottom: 5px;
+  }
+
+  #player-controls img {
+    height: 45px;
+  }
+
+  #player-controls :first-child {
+    margin-right: 15px;
+  }
+
+  #player-controls :nth-child(2) {
+    margin-right: 5px;
+  }
+</style>
