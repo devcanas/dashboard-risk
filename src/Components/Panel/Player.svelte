@@ -1,72 +1,105 @@
 <script>
-  import { availableDatesStore, menuSelection } from "../../stores";
+  import {
+    availableDatesStore,
+    dateSelection,
+    menuSelection,
+    player,
+  } from "../../stores";
   import Timeline from "./Timeline.svelte";
+  import PlayerControls from "./PlayerControls.svelte";
   import moment from "moment";
   import config from "../../config";
+  import { onMount } from "svelte";
 
-  const getLabelForTimeLineAt = ({ scrubberOffsetPercentage }) => {
+  let label;
+
+  const didScrubTo = ({ scrubberOffsetPercentage }) => {
+    setSelectedDateForScrubberAt(scrubberOffsetPercentage);
+  };
+
+  const didPressPlayPause = () => {
+    const isPlaying = $player.isPlaying;
+    player.setIsPlaying(!isPlaying);
+  };
+
+  const didPressPreviousDay = () => {
+    if ($dateSelection.startDateOffset <= 0) return;
+    const newDate = moment($dateSelection.selectedDate)
+      .subtract(1, "days")
+      .format(config.dateFormat);
+    dateSelection.setSelectedDate(newDate, $dateSelection.startDateOffset - 1);
+  };
+
+  const didPressNextDay = () => {
+    const { selectedInfoSourceId } = $menuSelection;
+    const { startDate, dataLength } = $availableDatesStore.filter(
+      (item) => item.id === selectedInfoSourceId
+    )[0];
+
+    if ($dateSelection.startDateOffset >= dataLength) return;
+    const newDate = moment($dateSelection.selectedDate)
+      .add(1, "days")
+      .format(config.dateFormat);
+    dateSelection.setSelectedDate(newDate, $dateSelection.startDateOffset + 1);
+  };
+
+  const setSelectedDateForScrubberAt = (scrubberOffsetPercentage) => {
     const { selectedInfoSourceId } = $menuSelection;
     const { startDate, dataLength } = $availableDatesStore.filter(
       (item) => item.id === selectedInfoSourceId
     )[0];
     const daysSince = Math.round(dataLength * scrubberOffsetPercentage);
     const firstDate = moment(startDate, config.dateFormat);
-    const days = daysSince === 0 ? daysSince : daysSince - 1;
-    const requestedDate = firstDate.add(days, "days");
-    return requestedDate.format(config.dateFormat);
+    const newDate = firstDate.add(daysSince, "days").format(config.dateFormat);
+    dateSelection.setSelectedDate(newDate, daysSince);
   };
+
+  const labelForSelectedDate = () => {
+    let dateFormat = "DD [de] MMMM [de] YYYY";
+    let selectedDate = moment($dateSelection.selectedDate);
+    return selectedDate.format(dateFormat);
+  };
+
+  const updateLabel = () => {
+    if (!label) return;
+    label.innerHTML = labelForSelectedDate();
+  };
+
+  dateSelection.subscribe(updateLabel);
+  onMount(updateLabel);
 </script>
 
 <div id="wrapper">
-  <div id="player-controls">
-    <img
-      class="actionable"
-      src="/images/UI/playpause.png"
-      alt="Play and pause"
-    />
-    <img
-      class="fadeable actionable"
-      src="/images/UI/previousday.png"
-      alt="Previous Day"
-    />
-    <img
-      class="fadeable actionable"
-      src="/images/UI/nextday.png"
-      alt="Next Day"
+  <div id="controls-wrapper">
+    <span bind:this={label}>25 de Novembro de 2020</span>
+    <PlayerControls
+      {didPressPlayPause}
+      {didPressPreviousDay}
+      {didPressNextDay}
     />
   </div>
-  <Timeline {getLabelForTimeLineAt} />
+
+  <Timeline {didScrubTo} />
 </div>
 
 <style>
-  .actionable {
-    cursor: pointer;
-    pointer-events: visible;
-  }
-
-  .actionable:active {
-    opacity: 0.3;
-  }
-
   #wrapper {
     display: flex;
     flex-direction: column;
   }
 
-  #player-controls {
+  #controls-wrapper {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 5px;
   }
 
-  #player-controls img {
-    height: 45px;
-  }
-
-  #player-controls :first-child {
-    margin-right: 15px;
-  }
-
-  #player-controls :nth-child(2) {
-    margin-right: 5px;
+  #controls-wrapper span {
+    font-size: 20px;
+    color: white;
+    padding: 10px;
+    background-color: rgba(39, 120, 173, 0.5);
+    border-radius: 10px;
   }
 </style>

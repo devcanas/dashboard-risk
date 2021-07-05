@@ -1,7 +1,12 @@
 <script>
   import { onMount } from "svelte";
-  import { timelineControls } from "../../stores";
-  export let getLabelForTimeLineAt;
+  import {
+    availableDatesStore,
+    dateSelection,
+    menuSelection,
+    timelineControls,
+  } from "../../stores";
+  export let didScrubTo;
 
   let timeline = { el: null, rect: null };
   let scrubber = { el: null, rect: null };
@@ -23,9 +28,8 @@
     let safeOffset = Math.min(Math.max(0, scrubOffset), scrubbableWidth);
     setScrubberPosition(safeOffset);
 
-    const label = getLabelForTimeLineAt({
-      scrubberOffsetPercentage: getScrubberOffsetPercentage(safeOffset),
-    });
+    const scrubberOffsetPercentage = getScrubberOffsetPercentage(safeOffset);
+    didScrubTo({ scrubberOffsetPercentage });
   };
 
   const getScrubberOffsetPercentage = (offset) => {
@@ -54,12 +58,29 @@
     scrubber.rect = scrubber.el.getBoundingClientRect();
   };
 
+  const handleNewDate = () => {
+    if (!timeline.rect) return;
+
+    const daysOffset = $dateSelection.startDateOffset;
+
+    const { selectedInfoSourceId } = $menuSelection;
+    const { startDate, dataLength } = $availableDatesStore.filter(
+      (item) => item.id === selectedInfoSourceId
+    )[0];
+
+    const scrubberOffset =
+      ((timeline.rect.width - scrubber.rect.width) * daysOffset) / dataLength;
+    setScrubberPosition(scrubberOffset);
+  };
+
   onMount(async () => {
     updateControlsMetadata();
 
     const initialOffset = timeline.rect.width - scrubber.rect.width;
     setScrubberPosition(initialOffset);
   });
+
+  dateSelection.subscribe(handleNewDate);
 </script>
 
 <svelte:window on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} />

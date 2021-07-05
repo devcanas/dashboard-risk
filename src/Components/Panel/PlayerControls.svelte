@@ -1,0 +1,53 @@
+<script>
+  export let didPressPlayPause;
+  export let didPressPreviousDay;
+  export let didPressNextDay;
+</script>
+
+<div id="player-controls">
+  <img
+    on:click={didPressPlayPause}
+    class="actionable"
+    src="/images/UI/playpause.png"
+    alt="Play and pause"
+  />
+  <img
+    on:click={didPressPreviousDay}
+    class="fadeable actionable"
+    src="/images/UI/previousday.png"
+    alt="Previous Day"
+  />
+  <img
+    on:click={didPressNextDay}
+    class="fadeable actionable"
+    src="/images/UI/nextday.png"
+    alt="Next Day"
+  />
+</div>
+
+<style>
+  .actionable {
+    cursor: pointer;
+    pointer-events: visible;
+  }
+
+  .actionable:active {
+    opacity: 0.3;
+  }
+
+  #player-controls {
+    display: flex;
+  }
+
+  #player-controls img {
+    height: 35px;
+  }
+
+  #player-controls :first-child {
+    margin-right: 15px;
+  }
+
+  #player-controls :nth-child(2) {
+    margin-right: 5px;
+  }
+</style>

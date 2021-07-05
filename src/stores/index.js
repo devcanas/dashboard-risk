@@ -5,6 +5,8 @@ import menuSelectionStore from "./menuSelectionStore";
 import riskIqdStore from "./riskIqdStore";
 import timelineControlsStore from "./timelineControls";
 import createColorsStore from "./colors";
+import dateSelectionStore from "./dateSelectionStore";
+import playerStore from "./playerStore";
 
 export const loading = loadingStore();
 export const menuSelection = menuSelectionStore();
@@ -13,3 +15,5 @@ export const riskIqd = riskIqdStore();
 export const timelineControls = timelineControlsStore();
 export const availableDatesStore = createAvailableDatesStore();
 export const colorsStore = createColorsStore();
+export const dateSelection = dateSelectionStore();
+export const player = playerStore();

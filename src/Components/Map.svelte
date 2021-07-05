@@ -115,18 +115,6 @@
     configureEventListenersForMap();
 
     changeMapLocationIfNeeded("continente");
-
-    const dataRes = await FetchService.riskIqd("sidjfjsd");
-    const { date, colors, values } = dataRes;
-
-    let riskColors = decompressRLE(colors.risk);
-    let iqdColors = decompressRLE(colors.iqd);
-
-    riskIqd.setState({
-      date,
-      values,
-      colors: { risk: riskColors, iqd: iqdColors },
-    });
   });
 </script>
 
