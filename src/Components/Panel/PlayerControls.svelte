@@ -1,4 +1,6 @@
 <script>
+  import { player } from "../../stores";
+
   export let didPressPlayPause;
   export let didPressPreviousDay;
   export let didPressNextDay;
@@ -13,13 +15,13 @@
   />
   <img
     on:click={didPressPreviousDay}
-    class="fadeable actionable"
+    class="{$player.isPlaying ? 'faded' : ''} actionable"
     src="/images/UI/previousday.png"
     alt="Previous Day"
   />
   <img
     on:click={didPressNextDay}
-    class="fadeable actionable"
+    class="{$player.isPlaying ? 'faded' : ''} actionable"
     src="/images/UI/nextday.png"
     alt="Next Day"
   />
@@ -29,6 +31,12 @@
   .actionable {
     cursor: pointer;
     pointer-events: visible;
+    transition-duration: 0.3s;
+  }
+
+  .faded {
+    transition-duration: 0.3s;
+    opacity: 0.3;
   }
 
   .actionable:active {

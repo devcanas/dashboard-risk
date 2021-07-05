@@ -4,8 +4,10 @@
     availableDatesStore,
     dateSelection,
     menuSelection,
+    player,
     timelineControls,
   } from "../../stores";
+
   export let didScrubTo;
 
   let timeline = { el: null, rect: null };

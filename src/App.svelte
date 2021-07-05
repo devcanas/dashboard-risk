@@ -8,15 +8,12 @@
     menuSelection,
     availableDatesStore,
     colorsStore,
-    riskIqd,
     dateSelection,
     mapData,
   } from "./stores/index";
   import FetchService from "./FetchService";
-  import StorageService from "./StorageService";
   import { onMount } from "svelte";
   import decompressRLE from "./Components/helpers/decompressRLE";
-  import riskIqdStore from "./stores/riskIqdStore";
   import moment from "moment";
   import "moment/locale/pt";
   import config from "./config";
@@ -36,7 +33,6 @@
   dateSelection.setSelectedDate();
 
   onMount(async () => {
-    console.log(await FetchService.colors("risco"));
     colorsStore.setAll(await FetchService.colors("risco"));
   });
 
@@ -63,6 +59,11 @@
     mapData.setState(buildMapDataState());
   });
 
+  menuSelection.subscribe((_) => {
+    if ($colorsStore.all.length === 0) return;
+    mapData.setState(buildMapDataState());
+  });
+
   const buildMapDataState = (
     allColors = $colorsStore.all,
     selectedDate = $dateSelection.selectedDate
@@ -72,9 +73,13 @@
     )[0];
 
     const { isPred, colors } = selectedColorMetadata;
+    const colorType =
+      $menuSelection.selectedInfoSourceId === "risco"
+        ? colors.risk
+        : colors.iqd;
     return {
       isPred,
-      colors: decompressRLE(JSON.parse(colors.risk)),
+      colors: decompressRLE(JSON.parse(colorType)),
     };
   };
 </script>

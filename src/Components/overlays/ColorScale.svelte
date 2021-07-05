@@ -14,18 +14,16 @@
       </div>
       <div class="color-scale-figures">
         {#each menu.intervals as interval}
-          {#if interval.shouldRender}
-            <div class="outer">
-              <div
-                class="inner"
-                style={`background-color: ${
-                  interval.color
-                    .primary /** TODO: check if we are in prediction or not */
-                };`}
-              />
-              {interval.asString}
-            </div>
-          {/if}
+          <div class="outer">
+            <div
+              class="inner"
+              style={`background-color: ${
+                interval.color
+                  .primary /** TODO: check if we are in prediction or not */
+              };`}
+            />
+            {interval.asString}
+          </div>
         {/each}
       </div>
     </div>

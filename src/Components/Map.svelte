@@ -1,9 +1,8 @@
 <script>
   import Overlays from "./Overlays.svelte";
   import LoadingSpinner from "./LoadingSpinner.svelte";
-  import { loading, menuSelection, menus, riskIqd, mapData } from "../stores";
+  import { loading, menuSelection, menus, mapData } from "../stores";
   import createMap from "./helpers/createMap";
-  import decompressRLE from "./helpers/decompressRLE";
   import {
     getConcelhoSahValue,
     getGeoProps,

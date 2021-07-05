@@ -13,6 +13,18 @@
 
   let label;
 
+  const handlePlayback = () => {
+    setTimeout(() => {
+      if (!$player.isPlaying) return;
+      handleNextPreviousDay({ direction: 1 });
+      handlePlayback();
+    }, 150);
+  };
+
+  player.subscribe(({ isPlaying }) => {
+    if (isPlaying) handlePlayback();
+  });
+
   const didScrubTo = ({ scrubberOffsetPercentage }) => {
     setSelectedDateForScrubberAt(scrubberOffsetPercentage);
   };
@@ -23,22 +35,37 @@
   };
 
   const didPressPreviousDay = () => {
-    if ($dateSelection.startDateOffset <= 0 || $player.isPlaying) return;
-    const newDate = moment($dateSelection.selectedDate)
-      .subtract(1, "days")
-      .format(config.dateFormat);
-    dateSelection.setSelectedDate(newDate, $dateSelection.startDateOffset - 1);
+    if ($player.isPlaying) return;
+    handleNextPreviousDay({ direction: -1 });
   };
 
   const didPressNextDay = () => {
     if ($player.isPlaying) return;
+    handleNextPreviousDay({ direction: 1 });
+  };
 
+  const handleNextPreviousDay = ({ direction }) => {
     const { dataLength } = $dateSelection.metadata;
-    if ($dateSelection.startDateOffset >= dataLength) return;
-    const newDate = moment($dateSelection.selectedDate)
-      .add(1, "days")
-      .format(config.dateFormat);
-    dateSelection.setSelectedDate(newDate, $dateSelection.startDateOffset + 1);
+
+    let newDate;
+    if (direction === 1 && $dateSelection.startDateOffset < dataLength) {
+      newDate = moment($dateSelection.selectedDate)
+        .add(1, "days")
+        .format(config.dateFormat);
+    } else if (direction === -1 && $dateSelection.startDateOffset > 0) {
+      newDate = moment($dateSelection.selectedDate)
+        .subtract(1, "days")
+        .format(config.dateFormat);
+    } else {
+      if ($player.isPlaying) {
+        player.setIsPlaying(false);
+      }
+      return;
+    }
+    dateSelection.setSelectedDate(
+      newDate,
+      $dateSelection.startDateOffset + direction
+    );
   };
 
   const setSelectedDateForScrubberAt = (scrubberOffsetPercentage) => {
