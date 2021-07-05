@@ -10,19 +10,22 @@
     colorsStore,
     riskIqd,
     dateSelection,
+    mapData,
   } from "./stores/index";
   import FetchService from "./FetchService";
+  import StorageService from "./StorageService";
   import { onMount } from "svelte";
   import decompressRLE from "./Components/helpers/decompressRLE";
   import riskIqdStore from "./stores/riskIqdStore";
   import moment from "moment";
   import "moment/locale/pt";
+  import config from "./config";
 
-  export let config;
+  export let configuration;
 
   moment.locale("pt");
 
-  const { availableDates, clientEndpoints, ...menusConfig } = config;
+  const { availableDates, clientEndpoints, ...menusConfig } = configuration;
   const { defaultSelectionState, ...menuConfig } = menusConfig.menus;
 
   FetchService.init(clientEndpoints);
@@ -33,21 +36,47 @@
   dateSelection.setSelectedDate();
 
   onMount(async () => {
-    const colors = await FetchService.colors("risco");
-    colorsStore.setState(colors);
+    console.log(await FetchService.colors("risco"));
+    colorsStore.setAll(await FetchService.colors("risco"));
   });
 
-  colorsStore.subscribe((colors) => {});
-
-  availableDatesStore.subscribe((availableDates) => {
+  availableDatesStore.subscribe(() => {
     const { selectedInfoSourceId } = $menuSelection;
     const { startDate, dataLength } = $availableDatesStore.filter(
       (item) => item.id === selectedInfoSourceId
     )[0];
 
-    const initialDate = moment(startDate).add(dataLength, "days");
+    const initialDate = moment(startDate)
+      .add(dataLength, "days")
+      .format(config.dateFormat);
+    dateSelection.setMetadata({ startDate, dataLength });
     dateSelection.setSelectedDate(initialDate, dataLength);
   });
+
+  dateSelection.subscribe(({ selectedDate }) => {
+    if ($colorsStore.all.length === 0) return;
+    mapData.setState(buildMapDataState());
+  });
+
+  colorsStore.subscribe(({ all }) => {
+    if (all.length === 0) return;
+    mapData.setState(buildMapDataState());
+  });
+
+  const buildMapDataState = (
+    allColors = $colorsStore.all,
+    selectedDate = $dateSelection.selectedDate
+  ) => {
+    const selectedColorMetadata = allColors.filter(
+      (item) => item.date === selectedDate
+    )[0];
+
+    const { isPred, colors } = selectedColorMetadata;
+    return {
+      isPred,
+      colors: decompressRLE(JSON.parse(colors.risk)),
+    };
+  };
 </script>
 
 <div class="container">

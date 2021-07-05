@@ -107,7 +107,7 @@
   .pill {
     position: absolute;
     border-radius: 20px;
-    background-color: rgb(39, 120, 173);
+    background-color: rgba(39, 120, 173, 0.8);
     color: white;
     left: 0;
     z-index: 0;

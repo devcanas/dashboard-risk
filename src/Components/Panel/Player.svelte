@@ -23,7 +23,7 @@
   };
 
   const didPressPreviousDay = () => {
-    if ($dateSelection.startDateOffset <= 0) return;
+    if ($dateSelection.startDateOffset <= 0 || $player.isPlaying) return;
     const newDate = moment($dateSelection.selectedDate)
       .subtract(1, "days")
       .format(config.dateFormat);
@@ -31,11 +31,9 @@
   };
 
   const didPressNextDay = () => {
-    const { selectedInfoSourceId } = $menuSelection;
-    const { startDate, dataLength } = $availableDatesStore.filter(
-      (item) => item.id === selectedInfoSourceId
-    )[0];
+    if ($player.isPlaying) return;
 
+    const { dataLength } = $dateSelection.metadata;
     if ($dateSelection.startDateOffset >= dataLength) return;
     const newDate = moment($dateSelection.selectedDate)
       .add(1, "days")
@@ -44,10 +42,7 @@
   };
 
   const setSelectedDateForScrubberAt = (scrubberOffsetPercentage) => {
-    const { selectedInfoSourceId } = $menuSelection;
-    const { startDate, dataLength } = $availableDatesStore.filter(
-      (item) => item.id === selectedInfoSourceId
-    )[0];
+    const { startDate, dataLength } = $dateSelection.metadata;
     const daysSince = Math.round(dataLength * scrubberOffsetPercentage);
     const firstDate = moment(startDate, config.dateFormat);
     const newDate = firstDate.add(daysSince, "days").format(config.dateFormat);

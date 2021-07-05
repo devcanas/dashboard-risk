@@ -4,6 +4,6 @@
   const configPromise = FetchService.initialConfiguration();
 </script>
 
-{#await configPromise then config}
-  <App {config} />
+{#await configPromise then configuration}
+  <App {configuration} />
 {/await}

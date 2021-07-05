@@ -62,11 +62,7 @@
     if (!timeline.rect) return;
 
     const daysOffset = $dateSelection.startDateOffset;
-
-    const { selectedInfoSourceId } = $menuSelection;
-    const { startDate, dataLength } = $availableDatesStore.filter(
-      (item) => item.id === selectedInfoSourceId
-    )[0];
+    const { dataLength } = $dateSelection.metadata;
 
     const scrubberOffset =
       ((timeline.rect.width - scrubber.rect.width) * daysOffset) / dataLength;
