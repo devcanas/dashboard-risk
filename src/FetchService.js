@@ -70,7 +70,11 @@ const sahByConcelho = async (concelho) => {
 };
 
 const colors = (type) => {
-  return get("http://localhost:9000/riskIqd/colors");
+  return get(`http://localhost:9000/riskIqd/colors/${type}`);
+};
+
+const chartData = () => {
+  return get(`http://localhost:9000/riskIqd/graph`);
 };
 
 const init = (endpoints) => {
@@ -88,6 +92,7 @@ const FetchService = {
   sahByConcelho,
   getLayers,
   colors,
+  chartData,
   init,
 };
 

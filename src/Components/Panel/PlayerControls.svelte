@@ -37,6 +37,7 @@
   .faded {
     transition-duration: 0.3s;
     opacity: 0.3;
+    cursor: default;
   }
 
   .actionable:active {

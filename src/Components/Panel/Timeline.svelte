@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+import FetchService from '../../FetchService';
   import {
     availableDatesStore,
     dateSelection,
@@ -12,8 +13,10 @@
 
   let timeline = { el: null, rect: null };
   let scrubber = { el: null, rect: null };
+  let chartCanvas = null;
 
   const handleMouseDownOnScrub = (e) => {
+    if ($player.isPlaying) return;
     timelineControls.setIsScrubbing(true);
     return false;
   };
@@ -58,6 +61,8 @@
   const updateControlsMetadata = (_) => {
     timeline.rect = timeline.el.getBoundingClientRect();
     scrubber.rect = scrubber.el.getBoundingClientRect();
+    chartCanvas.style.width = timeline.rect.width;
+    chartCanvas.style.height = timeline.rect.height;
   };
 
   const handleNewDate = () => {
@@ -71,11 +76,35 @@
     setScrubberPosition(scrubberOffset);
   };
 
+  const configureRiskChart = async () => {
+    const {values, yscale} = await FetchService.chartData();
+    const indexedValues = values.map((value, index) => [index, value])
+
+    const xScale = d3.scaleLinear().domain([0, values.length]).range([0, timeline.rect.width])
+    const yScale = d3.scaleLinear().domain([0, yscale]).range([timeline.rect.height, 5]);
+
+    const line = d3.line()
+      .x(function(d) { return xScale(d[0]); }) 
+      .y(function(d) { return yScale(d[1]); }) 
+      .curve(d3.curveCatmullRom.alpha(0.1))
+      
+    d3.select("svg")
+      .append("path")
+      .datum(indexedValues) 
+      .attr("class", "line") 
+      .attr("d", line)
+      .style("fill", "none")
+      .style("stroke", "rgb(200,100,100)")
+      .style("stroke-width", "5");
+  }
+
   onMount(async () => {
     updateControlsMetadata();
 
     const initialOffset = timeline.rect.width - scrubber.rect.width;
     setScrubberPosition(initialOffset);
+
+    configureRiskChart()
   });
 
   dateSelection.subscribe(handleNewDate);
@@ -83,9 +112,11 @@
 
 <svelte:window on:mousemove={handleMouseMove} on:mouseup={handleMouseUp} />
 <div id="container" bind:this={timeline.el}>
+  <svg bind:this={chartCanvas}></svg>
   <div class="center_line" />
   <div
     id="slider-knob"
+    class={$player.isPlaying ? "faded" : ""}
     on:mousedown={handleMouseDownOnScrub}
     bind:this={scrubber.el}
   />
@@ -99,6 +130,7 @@
     background-color: rgba(39, 120, 173, 0.5);
     pointer-events: visible;
     position: relative;
+    overflow: hidden;
   }
 
   .center_line {
@@ -118,5 +150,11 @@
     top: 40px;
     cursor: grab;
     z-index: 3;
+    transition-duration: 0.3s;
+  }
+
+  .faded {
+    opacity: 0.3;
+    cursor: default;
   }
 </style>

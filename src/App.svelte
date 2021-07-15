@@ -33,7 +33,8 @@
   dateSelection.setSelectedDate();
 
   onMount(async () => {
-    colorsStore.setAll(await FetchService.colors("risco"));
+    const { selectedInfoSourceId } = $menuSelection;
+    colorsStore.setAll(await FetchService.colors(selectedInfoSourceId));
   });
 
   availableDatesStore.subscribe(() => {
@@ -41,10 +42,10 @@
     const { startDate, dataLength } = $availableDatesStore.filter(
       (item) => item.id === selectedInfoSourceId
     )[0];
-
     const initialDate = moment(startDate)
       .add(dataLength, "days")
       .format(config.dateFormat);
+
     dateSelection.setMetadata({ startDate, dataLength });
     dateSelection.setSelectedDate(initialDate, dataLength);
   });
@@ -59,7 +60,9 @@
     mapData.setState(buildMapDataState());
   });
 
-  menuSelection.subscribe((_) => {
+  menuSelection.subscribe(async (_) => {
+    const { selectedInfoSourceId } = $menuSelection;
+    await colorsStore.setAll(await FetchService.colors(selectedInfoSourceId));
     if ($colorsStore.all.length === 0) return;
     mapData.setState(buildMapDataState());
   });
@@ -71,15 +74,10 @@
     const selectedColorMetadata = allColors.filter(
       (item) => item.date === selectedDate
     )[0];
-
     const { isPred, colors } = selectedColorMetadata;
-    const colorType =
-      $menuSelection.selectedInfoSourceId === "risco"
-        ? colors.risk
-        : colors.iqd;
     return {
       isPred,
-      colors: decompressRLE(JSON.parse(colorType)),
+      colors: decompressRLE(JSON.parse(colors)),
     };
   };
 </script>
